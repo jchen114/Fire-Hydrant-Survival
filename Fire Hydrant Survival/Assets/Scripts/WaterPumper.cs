@@ -6,8 +6,12 @@ public class WaterPumper : MonoBehaviour {
 	private bool isAppEditing;
 	private bool touchStartedOnHydrant;
 	private Vector2 centerOfHydrant;
+	public float thrust;
+
+
 
 	private GameObject hydrant;
+	public GameObject waterSegment; // Prefab connected through inspector
 
 	// Use this for initialization
 	void Start () {
@@ -15,7 +19,7 @@ public class WaterPumper : MonoBehaviour {
 		isAppEditing = Application.isEditor;
 		if (isAppEditing) {
 			print ("Editing");
-		} else {
+		} else {	
 			print ("On mobile");
 		}
 
@@ -25,8 +29,9 @@ public class WaterPumper : MonoBehaviour {
 		centerOfHydrant = hydrant.GetComponent<BoxCollider2D>().offset;
 		centerOfHydrant = hydrant.GetComponent<BoxCollider2D> ().transform.TransformPoint (centerOfHydrant);
 		Debug.Log ("Center of hydrant x = " + centerOfHydrant.x + ". y = " + centerOfHydrant.y);
+
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 
@@ -52,17 +57,18 @@ public class WaterPumper : MonoBehaviour {
 
 	void EditorTouchHandler() {
 
+		Vector2 pos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+
 		if (Input.GetMouseButtonDown (0)) {
-			
-			Vector2 pos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
 			HandleInitialTouchPosition (pos);
 		}
 
 		if (touchStartedOnHydrant && Input.GetMouseButton(0)) {
-
-			Vector2 pos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
 			HandleTouchWhilePressed (pos);
+		}
 
+		if (touchStartedOnHydrant && Input.GetMouseButtonUp (0)) {
+			HandleTouchEnd (pos);
 		}
 	}
 
@@ -95,9 +101,33 @@ public class WaterPumper : MonoBehaviour {
 		if (onHydrant) {
 			Debug.Log ("On hydrant");
 		} else {
-			Debug.Log ("Off Hydrant");
+			//Debug.Log ("Off Hydrant");
+			Squirt (centerOfHydrant, Camera.main.ScreenToWorldPoint(pos));
 		}
 
+	}
+
+	void Squirt(Vector2 initialPos, Vector2 endPos) {
+		//Debug.Log ("Drawing water");
+		Debug.DrawLine(initialPos, endPos, Color.red);
+
+		// Get the orientation of the end pos
+		Vector2 v2 = endPos - initialPos;
+		float angle = 90 + Mathf.Atan2(v2.y, v2.x) * Mathf.Rad2Deg;
+		//Debug.Log ("Angle = " + angle);
+		Quaternion initialRotation = Quaternion.AngleAxis(angle, new Vector3(0,0,1));
+
+		// Instantiate the water segment prefab.
+		GameObject waterSeg = (GameObject) Instantiate(waterSegment, initialPos, initialRotation);
+		// Apply velocity to it
+		Rigidbody2D rigidBody =  waterSeg.GetComponent<Rigidbody2D>();
+		Vector2 vectorDir = endPos - centerOfHydrant;
+		vectorDir.Normalize();
+		rigidBody.AddForce (vectorDir * thrust);
+	}
+
+	void HandleTouchEnd(Vector2 pos) {
+		touchStartedOnHydrant = false; // End the touch
 	}
 
 }
