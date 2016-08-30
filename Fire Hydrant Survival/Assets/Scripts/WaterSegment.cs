@@ -17,4 +17,18 @@ public class WaterSegment : MonoBehaviour {
 		//Debug.Log ("Destroy myself");
 		DestroyObject (gameObject);
 	}
+
+	void OnCollisionEnter2D(Collision2D col) {
+		if (col.gameObject.tag == Constants.DOG_TAG) {
+			// Get pushed back.
+			Debug.Log("Hit a dog");
+
+		}
+	}
+
+	void OnTriggerEnter2D(Collider2D other){
+		if (other.gameObject.tag == Constants.DOG_TAG) {
+			
+		}   
+	} 
 }

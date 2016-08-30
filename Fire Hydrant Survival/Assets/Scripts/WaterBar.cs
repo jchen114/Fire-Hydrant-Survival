@@ -1,35 +1,40 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class WaterBar : MonoBehaviour {
 
-	float maxWaterLvl = 100.0f;
-	float currWaterLvl = 100.0f;
+	private float fillAmount;
 
+	public float maxWaterLvl { get; set;}
 
+	public float currWaterLvl {
+		set { 
+			fillAmount = Map (value, 0, maxWaterLvl, 0, 1);
+			//Debug.Log ("value = " + value + " Fill amount = " + fillAmount);
+		}
+	}
 
-	void OnGUI()
-	{
-		Rect position = new Rect (10, Screen.height - 110, 20, 100);
-		DrawQuad (position, new Color(0.5f,0.5f,0.5f) );
-	} 
+	[SerializeField]
+	private Image content;
+
+	void Start () {
+	}
 
 	void Update()
-	{
-		if (currWaterLvl < 0) {
-			currWaterLvl = 0;
-		}
-
-		if (currWaterLvl > maxWaterLvl) {
-			currWaterLvl = maxWaterLvl;
-		}
-
-
-
+	{		
+		HandleBar ();
 	}
 
-	void DrawQuad(Rect position, Color color) {
-		
+	void HandleBar() {
+
+		if (fillAmount != content.fillAmount) {
+			content.fillAmount = fillAmount;
+		}
 	}
 
-}
+	private float Map(float value, float minValue, float maxValue, float outValueMin, float outValueMax) {
+		return (value - minValue) / (maxValue - minValue) * (outValueMax - outValueMin) + outValueMin;
+	}
+
+} 

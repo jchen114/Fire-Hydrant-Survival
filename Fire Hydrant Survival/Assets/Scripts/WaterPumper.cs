@@ -8,10 +8,36 @@ public class WaterPumper : MonoBehaviour {
 	private Vector2 centerOfHydrant;
 	public float thrust;
 
-
-
 	private GameObject hydrant;
 	public GameObject waterSegment; // Prefab connected through inspector
+
+	[SerializeField]
+	private Stat water;
+
+	[SerializeField]
+	private float decreaseAmount;
+
+	[SerializeField]
+	private float increaseAmount;
+
+	private bool incurredPenalty = false;
+
+	[SerializeField]
+	private float rechargePenaltyTime;
+
+	private float penaltyTimeLeft;
+
+	private bool shouldRecharge = true;
+
+	[SerializeField]
+	private float lerpSpeed;
+
+	void Awake() {
+		// Setup Water level
+		water.waterBar = GameObject.Find(Constants.WATER_TANK).GetComponent<WaterBar>();
+		water.MaxValue = 100;
+		water.CurrentValue = 100;
+	}
 
 	// Use this for initialization
 	void Start () {
@@ -19,14 +45,14 @@ public class WaterPumper : MonoBehaviour {
 		isAppEditing = Application.isEditor;
 		if (isAppEditing) {
 			print ("Editing");
-		} else {	
+		} else {
 			print ("On mobile");
 		}
 
 		touchStartedOnHydrant = false;
 
 		hydrant = GameObject.Find (Constants.FIRE_HYDRANT_OBJECT);
-		centerOfHydrant = hydrant.GetComponent<BoxCollider2D>().offset;
+		centerOfHydrant = hydrant.GetComponent<BoxCollider2D> ().offset;
 		centerOfHydrant = hydrant.GetComponent<BoxCollider2D> ().transform.TransformPoint (centerOfHydrant);
 		Debug.Log ("Center of hydrant x = " + centerOfHydrant.x + ". y = " + centerOfHydrant.y);
 
@@ -35,12 +61,28 @@ public class WaterPumper : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if (isAppEditing) {
-			EditorTouchHandler ();
-		} else {
-			MobileTouchHandler ();
+		shouldRecharge = true;
+
+		if (incurredPenalty) {
+			penaltyTimeLeft -= Time.deltaTime;
+			//Debug.Log ("Penalty time left = " + penaltyTimeLeft);
+			incurredPenalty = (penaltyTimeLeft <= 0) ? false: true;
+			if (!incurredPenalty) {
+				water.CurrentValue = Mathf.Lerp(water.CurrentValue, water.CurrentValue + increaseAmount, Time.deltaTime * lerpSpeed);
+			}
 		}
 
+		if (!incurredPenalty) {
+			
+			if (isAppEditing) {
+				EditorTouchHandler ();
+			} else {
+				MobileTouchHandler ();
+			}
+			UpdateWater ();
+		}
+
+		water.SetLevel ();
 	}
 
 	void MobileTouchHandler() {
@@ -80,7 +122,7 @@ public class WaterPumper : MonoBehaviour {
 		{
 			if(hitInfo.transform.gameObject.Equals(hydrant)) {
 
-				Debug.Log("Hit the hydrant");
+				//Debug.Log("Hit the hydrant");
 				touchStartedOnHydrant = true;
 				// Here you can check hitInfo to see which collider has been hit, and act appropriately.
 			}
@@ -99,12 +141,19 @@ public class WaterPumper : MonoBehaviour {
 			}
 		}
 		if (onHydrant) {
-			Debug.Log ("On hydrant");
+			//Debug.Log ("On hydrant");
+			shouldRecharge = true;
 		} else {
 			//Debug.Log ("Off Hydrant");
 			Squirt (centerOfHydrant, Camera.main.ScreenToWorldPoint(pos));
+			water.CurrentValue = Mathf.Lerp(water.CurrentValue, water.CurrentValue - decreaseAmount, Time.deltaTime * lerpSpeed);
+			shouldRecharge = false;
 		}
 
+	}
+
+	void HandleTouchEnd(Vector2 pos) {
+		touchStartedOnHydrant = false; // End the touch
 	}
 
 	void Squirt(Vector2 initialPos, Vector2 endPos) {
@@ -126,8 +175,18 @@ public class WaterPumper : MonoBehaviour {
 		rigidBody.AddForce (vectorDir * thrust);
 	}
 
-	void HandleTouchEnd(Vector2 pos) {
-		touchStartedOnHydrant = false; // End the touch
+	void UpdateWater() {
+		
+		if (water.CurrentValue <= 0) {
+			penaltyTimeLeft = rechargePenaltyTime;
+			incurredPenalty = true;
+			Debug.Log ("Incurred penalty");
+		}
+
+		if (shouldRecharge && !incurredPenalty) {
+			water.CurrentValue = Mathf.Lerp(water.CurrentValue, water.CurrentValue + increaseAmount, Time.deltaTime * lerpSpeed);
+		}
 	}
 
 }
+
