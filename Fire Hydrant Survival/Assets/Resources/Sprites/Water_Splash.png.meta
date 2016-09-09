@@ -1,13 +1,13 @@
 fileFormatVersion: 2
-guid: a1ac922e5981e4adab54f88dfeda2dff
-timeCreated: 1472525117
+guid: 69ededcda1a8449bf9369f877a18ced5
+timeCreated: 1472527288
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: Water_Splash_large_0
-    21300002: Water_Splash_large_1
-    21300004: Water_Splash_large_2
-    21300006: Water_Splash_large_3
+    21300000: Water_Splash_0
+    21300002: Water_Splash_1
+    21300004: Water_Splash_2
+    21300006: Water_Splash_3
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -57,52 +57,52 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Water_Splash_large_0
+      name: Water_Splash_0
       rect:
         serializedVersion: 2
-        x: 1041
-        y: 72
-        width: 177
-        height: 157
+        x: 1648
+        y: 0
+        width: 251
+        height: 155
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Water_Splash_large_1
+      name: Water_Splash_1
       rect:
         serializedVersion: 2
-        x: 1254
-        y: 72
-        width: 203
-        height: 170
+        x: 1969
+        y: 0
+        width: 318
+        height: 166
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Water_Splash_large_2
+      name: Water_Splash_2
       rect:
         serializedVersion: 2
-        x: 1502
-        y: 72
-        width: 188
-        height: 192
+        x: 2362
+        y: 0
+        width: 299
+        height: 191
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Water_Splash_large_3
+      name: Water_Splash_3
       rect:
         serializedVersion: 2
-        x: 1733
-        y: 74
-        width: 194
-        height: 184
+        x: 2725
+        y: 0
+        width: 308
+        height: 194
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

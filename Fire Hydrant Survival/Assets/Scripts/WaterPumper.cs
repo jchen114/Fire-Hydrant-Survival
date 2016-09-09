@@ -34,7 +34,7 @@ public class WaterPumper : MonoBehaviour {
 
 	void Awake() {
 		// Setup Water level
-		water.waterBar = GameObject.Find(Constants.WATER_TANK).GetComponent<WaterBar>();
+		water.waterBar = GameObject.Find(Constants.OBJ_WATER_TANK).GetComponent<WaterBar>();
 		water.MaxValue = 100;
 		water.CurrentValue = 100;
 	}
@@ -51,7 +51,7 @@ public class WaterPumper : MonoBehaviour {
 
 		touchStartedOnHydrant = false;
 
-		hydrant = GameObject.Find (Constants.FIRE_HYDRANT_OBJECT);
+		hydrant = GameObject.Find (Constants.OBJ_FIRE_HYDRANT);
 		centerOfHydrant = hydrant.GetComponent<BoxCollider2D> ().offset;
 		centerOfHydrant = hydrant.GetComponent<BoxCollider2D> ().transform.TransformPoint (centerOfHydrant);
 		Debug.Log ("Center of hydrant x = " + centerOfHydrant.x + ". y = " + centerOfHydrant.y);

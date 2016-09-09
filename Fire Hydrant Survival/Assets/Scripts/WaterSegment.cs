@@ -3,32 +3,65 @@ using System.Collections;
 
 public class WaterSegment : MonoBehaviour {
 
+	SpriteRenderer mySpriteRenderer;
+
+	Sprite[] waterSplashes;
+
+	float timeForAnimation = 0.05f;
+	float displayTime;
+
+	bool hasCollided = false;
+
+	int spriteIdx;
+
 	// Use this for initialization
 	void Start () {
-	
+		mySpriteRenderer = GetComponent<SpriteRenderer> ();
+		waterSplashes = Resources.LoadAll <Sprite> ("Sprites/Water_Splash");
+		displayTime = timeForAnimation / waterSplashes.Length;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		if (hasCollided) {
 
-	}
+			displayTime -= Time.deltaTime;
 
-	void OnBecameInvisible() {
-		//Debug.Log ("Destroy myself");
-		DestroyObject (gameObject);
-	}
+			if (displayTime <= 0) {
+				// reset display time
+				displayTime = timeForAnimation / waterSplashes.Length;
 
-	void OnCollisionEnter2D(Collision2D col) {
-		if (col.gameObject.tag == Constants.DOG_TAG) {
-			// Get pushed back.
-			Debug.Log("Hit a dog");
+				if (spriteIdx == waterSplashes.Length) {
+					// Delete object
+					DestroyObject (gameObject);
+
+				} else {
+					// Change sprite
+					mySpriteRenderer.sprite = waterSplashes[spriteIdx ++];
+				}
+			}
 
 		}
 	}
 
+	void FixedUpdate() {
+		
+	}
+
+	void OnBecameInvisible(		) {
+		//Debug.Log ("Destroy myself");
+		DestroyObject (gameObject);
+	}
+
 	void OnTriggerEnter2D(Collider2D other){
 		if (other.gameObject.tag == Constants.DOG_TAG) {
-			
+			//Debug.Log("Hit a dog");
+			spriteIdx = 0;
+			mySpriteRenderer.sprite = waterSplashes[spriteIdx ++];
+			gameObject.GetComponent<Transform> ().localScale = new Vector3 (1, 1, 0);
+			mySpriteRenderer.flipX = true;
+			mySpriteRenderer.flipY = true;
+			hasCollided = true;
 		}   
 	} 
 }
