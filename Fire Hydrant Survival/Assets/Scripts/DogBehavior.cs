@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-enum DogState {MOVING, PEEING, DEFEATED};
+public enum DogState {INACTIVE, MOVING, PEEING, DEFEATED, ESCAPE};
 enum DogAction {LEFT, RIGHT, UP, DOWN, IDLE};
 
 public class DogBehavior : MonoBehaviour {
@@ -10,7 +10,7 @@ public class DogBehavior : MonoBehaviour {
 	private static string STATE_VARIABLE = "State";
 
 	private Animator anim;
-	DogState myState;
+	public DogState myState;
 	DogAction currentAction;
 
 	GameObject fireHydrant;
