@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public enum DogState {INACTIVE, MOVING, PEEING, DEFEATED, ESCAPE};
+public enum DogState {INACTIVE, MOVING, PEEING, DEFEATED, ESCAPE, HIT};
 enum DogAction {LEFT, RIGHT, UP, DOWN, IDLE};
 
 public class DogBehavior : MonoBehaviour {
@@ -12,6 +12,8 @@ public class DogBehavior : MonoBehaviour {
 	private Animator anim;
 	public DogState myState;
 	DogAction currentAction;
+
+	public DogType myType;
 
 	GameObject fireHydrant;
 	GameObject me;
@@ -25,7 +27,13 @@ public class DogBehavior : MonoBehaviour {
 	float timeForAction;
 	float timeLeftForAction = 0;
 
-	float magnitude = 5.0f;
+	float moveMagnitude = 5.0f;
+
+	Vector2 hitDirection;
+	float hitMagnitude = 3.0f;
+
+	float hitTime = 0.4f;
+	float hitDuration = 0.0f;
 
 	// Use this for initialization
 	void Start () {
@@ -45,9 +53,6 @@ public class DogBehavior : MonoBehaviour {
 
 		myCenter = this.gameObject.GetComponent<Transform> ().position;
 		Vector2 size = fireHydrantCollider.bounds.size;
-		//Debug.Log ("Center = (" + myCenter.x + ", " + myCenter.y + ")");
-		//Debug.Log ("Center of hydrant = (" + centerOfHydrant.x + ", " + centerOfHydrant.y + ")");
-		//Debug.Log (" Size = (" + size.x + ", " + size.y + ")");
 		if (myCenter.x > centerOfHydrant.x - size.x/2 - 0.0f &&
 			myCenter.x < centerOfHydrant.x + size.x/2 + 0.0f &&
 			myCenter.y > centerOfHydrant.y - size.y/2 - 0.0f &&
@@ -58,6 +63,19 @@ public class DogBehavior : MonoBehaviour {
 		}
 
 		switch (myState) {
+
+		case DogState.HIT:
+			{
+				// Move in direction of hit for some duration.
+				hitDuration -= Time.deltaTime;
+				if (hitDuration <= 0) {
+					myState = DogState.MOVING;
+				} else {
+					Move (hitDirection, hitMagnitude);
+				}
+
+			}
+			break;
 		case DogState.MOVING:
 			{
 				//Debug.Log ("Moving");
@@ -249,40 +267,38 @@ public class DogBehavior : MonoBehaviour {
 	void MoveLeft() {
 		//Debug.Log ("Move left");
 		Vector2 direction = new Vector2(-1, 0);
-		Move (direction);
+		Move (direction, moveMagnitude);
 	}
 
 	void MoveRight() {
 		//Debug.Log ("Move right");
 		Vector2 direction = new Vector2(1, 0);
-		Move (direction);
+		Move (direction, moveMagnitude);
 	}
 
 	void MoveUp() {
 		//Debug.Log ("Move up");
 		Vector2 direction = new Vector2(0, 1);
-		Move (direction);
+		Move (direction, moveMagnitude);
 	}
 
 	void MoveDown() {
 		//Debug.Log ("Move down");
 		Vector2 direction = new Vector2(0, -1);
-		Move (direction);
+		Move (direction, moveMagnitude);
 	}
 
 	void MoveIdle() {
 		//Debug.Log ("Move idle");
 		Vector2 direction = new Vector2(0, 0);
-		Move (direction);
+		Move (direction, moveMagnitude);
 	}
 
-	void Move (Vector2 direction) {
+	void Move (Vector2 direction, float magnitude) {
 		Transform transform = GetComponent<Transform> ();
 		Vector2 tfrm = (Vector2) transform.position + direction * magnitude * Time.deltaTime;
-		//Vector2 tfrm = (Vector2) transform.position + direction * magnitude;
-		//Debug.Log ("transform before = (" + GetComponent<Transform> ().position.x + ", " + GetComponent<Transform> ().position.y + ")");
 		GetComponent<Transform> ().position = tfrm;
-		Debug.Log ("transform after = (" + GetComponent<Transform> ().position.x + ", " + GetComponent<Transform> ().position.y + ")");
+		//Debug.Log ("transform after = (" + GetComponent<Transform> ().position.x + ", " + GetComponent<Transform> ().position.y + ")");
 	}
 
 	float SampleTimeForAction() {
@@ -308,6 +324,15 @@ public class DogBehavior : MonoBehaviour {
 			Debug.Log ("Idle");
 			break;
 
+		}
+	}
+
+	public void DogWasHit(Vector2 direction) {
+
+		if (myState == DogState.MOVING) {
+			hitDirection = direction;
+			myState = DogState.HIT;
+			hitDuration = hitTime;
 		}
 	}
 

@@ -62,6 +62,9 @@ public class WaterSegment : MonoBehaviour {
 			mySpriteRenderer.flipX = true;
 			mySpriteRenderer.flipY = true;
 			hasCollided = true;
+			Vector2 velocity = GetComponent<Rigidbody2D> ().velocity;
+			velocity.Normalize ();
+			other.gameObject.GetComponent<DogBehavior> ().DogWasHit(velocity);
 		}   
 	} 
 }
