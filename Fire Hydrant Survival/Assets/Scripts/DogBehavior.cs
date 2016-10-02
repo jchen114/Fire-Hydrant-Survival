@@ -32,8 +32,10 @@ public class DogBehavior : MonoBehaviour {
 	Vector2 hitDirection;
 	float hitMagnitude = 3.0f;
 
-	float hitTime = 0.4f;
+	float hitTime = 0.2f;
 	float hitDuration = 0.0f;
+
+	MoraleManager moraleManager;
 
 	// Use this for initialization
 	void Start () {
@@ -45,8 +47,21 @@ public class DogBehavior : MonoBehaviour {
 		centerOfHydrant = fireHydrantCollider.offset;
 		centerOfHydrant = fireHydrantCollider.transform.TransformPoint (centerOfHydrant);
 
+		foreach (Transform child in transform) {
+			if (child.name == Constants.UI_MORALE_CANVAS) {
+				Debug.Log ("Canvas found");
+				moraleManager = child.gameObject.GetComponent < MoraleManager>() as MoraleManager;
+				moraleManager.SetDogType (DogType.SMALL_DOG);
+			}
+		}
+
+
 		me = this.gameObject;
 
+	}
+
+	public void UnleashDog() {
+		myState = DogState.MOVING;
 	}
 
 	void FixedUpdate() {
@@ -330,6 +345,7 @@ public class DogBehavior : MonoBehaviour {
 	public void DogWasHit(Vector2 direction) {
 
 		if (myState == DogState.MOVING) {
+			moraleManager.DogWasHit ();
 			hitDirection = direction;
 			myState = DogState.HIT;
 			hitDuration = hitTime;

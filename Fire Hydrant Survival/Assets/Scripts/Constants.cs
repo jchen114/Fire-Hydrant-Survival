@@ -23,5 +23,6 @@ public class Constants : MonoBehaviour
 	public static string ANIM_PEE_LEFT = "Pee Right";
 
 	public static string UI_MORALE_BAR = "Morale Bar";
+	public static string UI_MORALE_CANVAS = "Morale Canvas";
 }
 
