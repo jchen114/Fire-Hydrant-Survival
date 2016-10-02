@@ -35,7 +35,11 @@ public class DogBehavior : MonoBehaviour {
 	float hitTime = 0.2f;
 	float hitDuration = 0.0f;
 
+	float peeAnimationTime;
+
 	MoraleManager moraleManager;
+
+	bool invincible = false;
 
 	// Use this for initialization
 	void Start () {
@@ -68,13 +72,36 @@ public class DogBehavior : MonoBehaviour {
 
 		myCenter = this.gameObject.GetComponent<Transform> ().position;
 		Vector2 size = fireHydrantCollider.bounds.size;
+
 		if (myCenter.x > centerOfHydrant.x - size.x/2 - 0.0f &&
 			myCenter.x < centerOfHydrant.x + size.x/2 + 0.0f &&
 			myCenter.y > centerOfHydrant.y - size.y/2 - 0.0f &&
 			myCenter.y < centerOfHydrant.y + size.y/2 + 0.0f) {
 
+			Debug.Log ("Peeing");
+			float lengthOfAnimation = 0.0f;
+			if (myCenter.x >= centerOfHydrant.x) {
+				// Pee right
+				anim.SetBool(Constants.BOOL_PEE_RIGHT, true);
+				lengthOfAnimation = GetAnimationlength (Constants.ANIM_PEE_RIGHT);
+			} else {
+				// Pee left
+				anim.SetBool(Constants.BOOL_PEE_LEFT, true);
+				lengthOfAnimation = GetAnimationlength (Constants.ANIM_PEE_LEFT);
+			}
+
+			peeAnimationTime = lengthOfAnimation;
+
+			Debug.Log("length = " + lengthOfAnimation);
+
 			myState = DogState.PEEING;
 
+		}
+
+		if (moraleManager.defeated) {
+			Debug.Log ("Dog was defeated");
+			invincible = true;
+			myState = DogState.DEFEATED;
 		}
 
 		switch (myState) {
@@ -126,27 +153,45 @@ public class DogBehavior : MonoBehaviour {
 			break;
 		case DogState.PEEING:
 			{
-				Debug.Log ("Peeing");
-				float lengthOfAnimation = 0.0f;
-				if (myCenter.x >= centerOfHydrant.x) {
-					// Pee right
-					anim.SetBool(Constants.BOOL_PEE_RIGHT, true);
-					lengthOfAnimation = GetAnimationlength (Constants.ANIM_PEE_RIGHT);
-				} else {
-					// Pee left
-					anim.SetBool(Constants.BOOL_PEE_LEFT, true);
-					lengthOfAnimation = GetAnimationlength (Constants.ANIM_PEE_LEFT);
+				peeAnimationTime -= Time.deltaTime;
+				if (peeAnimationTime <= 0) {
+					peeAnimationTime = 0;
+					myState = DogState.ESCAPE;
 				}
 
-				Debug.Log("length = " + lengthOfAnimation);
+
+				invincible = true;
+
+			}
+			break;
+		case DogState.ESCAPE:
+			{
+				if (myCenter.x >= centerOfHydrant.x) {
+					currentAction = DogAction.RIGHT;
+					MoveRight ();
+				} else {
+					currentAction = DogAction.LEFT;
+					MoveLeft ();
+				}
+
+				SetAnimation ();
 
 			}
 			break;
 		case DogState.DEFEATED:
 			{
-				Debug.Log ("Defeated");
+				currentAction = DogAction.UP;
+				MoveUp ();
+				SetAnimation ();
 			}
 			break;
+		}
+	}
+
+	void OnBecameInvisible() {
+		if (myState == DogState.ESCAPE || myState == DogState.DEFEATED) {
+			Debug.Log ("Inactive");
+			myState = DogState.INACTIVE;
 		}
 	}
 
@@ -344,7 +389,7 @@ public class DogBehavior : MonoBehaviour {
 
 	public void DogWasHit(Vector2 direction) {
 
-		if (myState == DogState.MOVING) {
+		if (myState == DogState.MOVING && !invincible) {
 			moraleManager.DogWasHit ();
 			hitDirection = direction;
 			myState = DogState.HIT;
