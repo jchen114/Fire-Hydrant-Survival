@@ -14,6 +14,8 @@ public class WaterSegment : MonoBehaviour {
 
 	int spriteIdx;
 
+	DogBehavior dogBehavior;
+
 	// Use this for initialization
 	void Start () {
 		mySpriteRenderer = GetComponent<SpriteRenderer> ();
@@ -23,6 +25,10 @@ public class WaterSegment : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		
+	}
+
+	void FixedUpdate() {
 		if (hasCollided) {
 
 			displayTime -= Time.deltaTime;
@@ -41,11 +47,11 @@ public class WaterSegment : MonoBehaviour {
 				}
 			}
 
-		}
-	}
+			Vector2 velocity = GetComponent<Rigidbody2D> ().velocity;
+			velocity.Normalize ();
+			dogBehavior.DogWasHit (velocity);
 
-	void FixedUpdate() {
-		
+		}
 	}
 
 	void OnBecameInvisible(		) {
@@ -62,9 +68,7 @@ public class WaterSegment : MonoBehaviour {
 			mySpriteRenderer.flipX = true;
 			mySpriteRenderer.flipY = true;
 			hasCollided = true;
-			Vector2 velocity = GetComponent<Rigidbody2D> ().velocity;
-			velocity.Normalize ();
-			other.gameObject.GetComponent<DogBehavior> ().DogWasHit(velocity);
+			dogBehavior = other.gameObject.GetComponent<DogBehavior> () as DogBehavior;
 		}   
 	} 
 }

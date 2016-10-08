@@ -71,35 +71,9 @@ public class DogBehavior : MonoBehaviour {
 	void FixedUpdate() {
 
 		myCenter = this.gameObject.GetComponent<Transform> ().position;
-		Vector2 size = fireHydrantCollider.bounds.size;
-
-		if (myCenter.x > centerOfHydrant.x - size.x/2 - 0.0f &&
-			myCenter.x < centerOfHydrant.x + size.x/2 + 0.0f &&
-			myCenter.y > centerOfHydrant.y - size.y/2 - 0.0f &&
-			myCenter.y < centerOfHydrant.y + size.y/2 + 0.0f) {
-
-			Debug.Log ("Peeing");
-			float lengthOfAnimation = 0.0f;
-			if (myCenter.x >= centerOfHydrant.x) {
-				// Pee right
-				anim.SetBool(Constants.BOOL_PEE_RIGHT, true);
-				lengthOfAnimation = GetAnimationlength (Constants.ANIM_PEE_RIGHT);
-			} else {
-				// Pee left
-				anim.SetBool(Constants.BOOL_PEE_LEFT, true);
-				lengthOfAnimation = GetAnimationlength (Constants.ANIM_PEE_LEFT);
-			}
-
-			peeAnimationTime = lengthOfAnimation;
-
-			Debug.Log("length = " + lengthOfAnimation);
-
-			myState = DogState.PEEING;
-
-		}
 
 		if (moraleManager.defeated) {
-			Debug.Log ("Dog was defeated");
+			//Debug.Log ("Dog was defeated");
 			invincible = true;
 			myState = DogState.DEFEATED;
 		}
@@ -120,33 +94,35 @@ public class DogBehavior : MonoBehaviour {
 			break;
 		case DogState.MOVING:
 			{
-				//Debug.Log ("Moving");
-				if (timeLeftForAction > 0) {
-					//Debug.Log ("Performing action");
-					timeLeftForAction -= Time.deltaTime;
+				if (true) {
+					//Debug.Log ("Moving");
+					if (timeLeftForAction > 0) {
+						//Debug.Log ("Performing action");
+						timeLeftForAction -= Time.deltaTime;
 
-					switch (currentAction) {
+						switch (currentAction) {
 
-					case DogAction.LEFT:
-						MoveLeft ();
-						break;
-					case DogAction.UP:
-						MoveUp ();
-						break;
-					case DogAction.RIGHT:
-						MoveRight ();
-						break;
-					case DogAction.DOWN:
-						MoveDown ();
-						break;
-					case DogAction.IDLE:
-						MoveIdle ();
-						break;
+						case DogAction.LEFT:
+							MoveLeft ();
+							break;
+						case DogAction.UP:
+							MoveUp ();
+							break;
+						case DogAction.RIGHT:
+							MoveRight ();
+							break;
+						case DogAction.DOWN:
+							MoveDown ();
+							break;
+						case DogAction.IDLE:
+							MoveIdle ();
+							break;
+						}
+
+					} else {
+						//Debug.Log ("New Action");
+						HandleActionChoice ();
 					}
-
-				} else {
-					//Debug.Log ("New Action");
-					HandleActionChoice ();
 				}
 
 			}
@@ -159,13 +135,13 @@ public class DogBehavior : MonoBehaviour {
 					myState = DogState.ESCAPE;
 				}
 
-
 				invincible = true;
 
 			}
 			break;
 		case DogState.ESCAPE:
 			{
+				//Debug.Log ("Escaping");
 				if (myCenter.x >= centerOfHydrant.x) {
 					currentAction = DogAction.RIGHT;
 					MoveRight ();
@@ -283,6 +259,35 @@ public class DogBehavior : MonoBehaviour {
 		timeLeftForAction = timeForAction;
 	}
 
+	bool CheckPeeCondition() {
+
+		Vector2 size = fireHydrantCollider.bounds.size;
+
+		if (myCenter.x > centerOfHydrant.x - size.x / 2 - 0.0f &&
+		    myCenter.x < centerOfHydrant.x + size.x / 2 + 0.0f &&
+		    myCenter.y > centerOfHydrant.y - size.y / 2 - 0.0f &&
+		    myCenter.y < centerOfHydrant.y + size.y / 2 + 0.0f) {
+
+			//Debug.Log ("Peeing");
+			float lengthOfAnimation = 0.0f;
+			if (myCenter.x >= centerOfHydrant.x) {
+				// Pee right
+				anim.SetBool (Constants.BOOL_PEE_RIGHT, true);
+				lengthOfAnimation = GetAnimationlength (Constants.ANIM_PEE_RIGHT);
+			} else {
+				// Pee left
+				anim.SetBool (Constants.BOOL_PEE_LEFT, true);
+				lengthOfAnimation = GetAnimationlength (Constants.ANIM_PEE_LEFT);
+			}
+
+			peeAnimationTime = lengthOfAnimation;
+
+			myState = DogState.PEEING;
+			return true;
+		}
+		return false;
+	}
+
 	float ComputeProbabilityOfCorrectManeuver(float distance) {
 		//float probability = 2.0f / 5.0f * 2.0f / Mathf.PI * Mathf.Atan (1 / 2 * distance) + 0.6f;
 		float probability = 19.0f/20.0f;
@@ -395,6 +400,29 @@ public class DogBehavior : MonoBehaviour {
 			myState = DogState.HIT;
 			hitDuration = hitTime;
 		}
+	}
+
+	void OnTriggerEnter2D(Collider2D other) {
+
+		float lengthOfAnimation = 0.0f;
+
+		if (other.gameObject.name == Constants.OBJ_FIRE_HYDRANT) {
+			Debug.Log("Hit the hydrant");
+			if (myCenter.x >= centerOfHydrant.x) {
+				// Pee right
+				anim.SetInteger(STATE_VARIABLE, 5);
+				lengthOfAnimation = GetAnimationlength (Constants.ANIM_PEE_RIGHT);
+			} else {
+				// Pee left
+				anim.SetInteger(STATE_VARIABLE, 6);
+				lengthOfAnimation = GetAnimationlength (Constants.ANIM_PEE_LEFT);
+			}
+
+			peeAnimationTime = lengthOfAnimation;
+
+			myState = DogState.PEEING;
+		} 
+
 	}
 
 }
