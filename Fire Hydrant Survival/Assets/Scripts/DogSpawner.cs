@@ -12,29 +12,23 @@ public class DogSpawner : MonoBehaviour {
 	GameObject[] bigDogs;
 
 	float spawnTime = 1.0f;
-	float remainingTime;
+	float remainingTime = 0.0f;
 
 	float timeOfPlay = 0.0f;
 
 	float screenHeight;
 	float screenWidth;
 
-	float sampleInterval;
+	float sampleInterval = 2.0f;
 
 	float intervalTime = 30.0f;
 	int intervalCount;
 
-	Vector2 spawnLocation = new Vector2(0,0);
-
+	Vector2 pos;
 
 	// Use this for initialization
 	void Start () {
 		remainingTime = spawnTime;
-		screenHeight = Camera.main.orthographicSize * 2.0f;
-		screenWidth = screenHeight * Screen.width / Screen.height;
-
-		sampleInterval = screenHeight / 2 + screenWidth + screenHeight / 2;
-
 
 	}
 
@@ -52,9 +46,39 @@ public class DogSpawner : MonoBehaviour {
 		if (remainingTime <= 0) {
 			
 			// Sample probability
-			float val = Random.Range(0.0f, 1.0f);
 
-			GameObject dogToSpawn;
+			Vector2 spawnLocation = new Vector2(0,0);
+
+			//GameObject dogToSpawn;
+
+			// Move Dog to spawn off screen.
+			float position = Random.Range(0, sampleInterval);
+
+			if (position < 0.5f) {
+				Debug.Log ("Left side");
+				spawnLocation.x = 0.0f;
+				spawnLocation.y = position;
+			} else if (position > 0.5f && position < 1.5f) {
+				Debug.Log ("Top");
+				spawnLocation.x = position - 0.5f;
+				spawnLocation.y = 1.0f;
+			} else {
+				Debug.Log ("Right");
+				spawnLocation.x = 1.0f;
+				spawnLocation.y = position - 1.0f;
+			}
+
+			pos = Camera.main.ViewportToWorldPoint (new Vector2 (spawnLocation.x, spawnLocation.y));
+
+			Debug.Log ("pos x " + pos.x + " pos y = " + pos.y);
+
+			Debug.DrawLine (
+				Camera.main.ViewportToWorldPoint (new Vector2 (0.5f, 0.0f)), 
+				pos, 
+				Color.red
+			);
+
+			float val = Random.Range(0.0f, 1.0f);
 
 //			if (val <= probabilities [0]) {
 //				// Spawn small dog
@@ -78,23 +102,9 @@ public class DogSpawner : MonoBehaviour {
 //				// Spawn big dog
 //			}
 
-			// Move Dog to spawn off screen.
-			float position = Random.Range(0, sampleInterval);
 
-			if (position < screenHeight / 2) {
-				spawnLocation.x = 0.0f;
-				spawnLocation.y = screenHeight / 2 + position;
-			} else if (position > screenHeight / 2 && position < screenHeight / 2 + screenWidth) {
-				spawnLocation.x = position;
-				spawnLocation.y = screenHeight;
-			} else {
-				spawnLocation.x = screenWidth;
-				spawnLocation.y = screenHeight / 2 + position - screenHeight / 2 - screenWidth;
-			}
 
 			//Debug.Log ("Spawn Location x = " + spawnLocation.x + " Spawn location y = " + spawnLocation.y);
-
-
 
 			//dogToSpawn.transform.position = spawnLocation;
 
@@ -105,11 +115,6 @@ public class DogSpawner : MonoBehaviour {
 
 		}
 
-	}
-
-	void OnDrawGizmos() {
-		Gizmos.color = Color.yellow;
-		Gizmos.DrawSphere (spawnLocation, 5);
 	}
 
 	// Update is called once per frame
