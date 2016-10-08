@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class DogSpawner : MonoBehaviour {
 
@@ -7,9 +8,9 @@ public class DogSpawner : MonoBehaviour {
 
 	float[] probabilities = new float[3] {1.0f, 0.0f, 0.0f};
 
-	GameObject[] smallDogs;
-	GameObject[] mediumDogs;
-	GameObject[] bigDogs;
+	List<GameObject> smallDogs = new List <GameObject> ();
+	List<GameObject> mediumDogs = new List <GameObject> ();
+	List<GameObject> bigDogs = = new List <GameObject> ();;
 
 	float spawnTime = 1.0f;
 	float remainingTime = 0.0f;
@@ -57,7 +58,7 @@ public class DogSpawner : MonoBehaviour {
 			if (position < 0.5f) {
 				Debug.Log ("Left side");
 				spawnLocation.x = 0.0f;
-				spawnLocation.y = position;
+				spawnLocation.y = position + 0.5f;
 			} else if (position > 0.5f && position < 1.5f) {
 				Debug.Log ("Top");
 				spawnLocation.x = position - 0.5f;
@@ -68,39 +69,37 @@ public class DogSpawner : MonoBehaviour {
 				spawnLocation.y = position - 1.0f;
 			}
 
+			Debug.Log ("spawn x,y = " + spawnLocation.x + " " + spawnLocation.y);
+
 			pos = Camera.main.ViewportToWorldPoint (new Vector2 (spawnLocation.x, spawnLocation.y));
 
 			Debug.Log ("pos x " + pos.x + " pos y = " + pos.y);
 
-			Debug.DrawLine (
-				Camera.main.ViewportToWorldPoint (new Vector2 (0.5f, 0.0f)), 
-				pos, 
-				Color.red
-			);
-
 			float val = Random.Range(0.0f, 1.0f);
 
-//			if (val <= probabilities [0]) {
-//				// Spawn small dog
-//				bool availableDog = false;
-//
-//				foreach (GameObject dog in smallDogs) {
-//					DogBehavior script = dog.GetComponent<DogBehavior>() as DogBehavior;
-//					if (script.myState == DogState.INACTIVE) {
-//						availableDog = true;
-//						dogToSpawn = dog;
-//					}
-//				}
-//				if (!availableDog) {
-//					// Create a Small Dog
-//					dogToSpawn = Instantiate(Resources.Load(Constants.OBJ_SMALL_DOG)) as GameObject;
-//				}
-//			} else if (val > probabilities [0] && val <= probabilities [0] + probabilities [1]) {
-//				// Spawn middle dog
-//				
-//			} else if (val > probabilities [0] + probabilities [1]) {
-//				// Spawn big dog
-//			}
+			GameObject dogToSpawn;
+
+			if (val <= probabilities [0]) {
+				// Spawn small dog
+				bool availableDog = false;
+
+				foreach (GameObject dog in smallDogs) {
+					DogBehavior script = dog.GetComponent<DogBehavior>() as DogBehavior;
+					if (script.myState == DogState.INACTIVE) {
+						availableDog = true;
+						dogToSpawn = dog;
+					}
+				}
+				if (!availableDog) {
+					// Create a Small Dog
+					dogToSpawn = Instantiate(Resources.Load(Constants.OBJ_SMALL_DOG)) as GameObject;
+				}
+			} else if (val > probabilities [0] && val <= probabilities [0] + probabilities [1]) {
+				// Spawn middle dog
+				
+			} else if (val > probabilities [0] + probabilities [1]) {
+				// Spawn big dog
+			}
 
 
 
@@ -114,6 +113,12 @@ public class DogSpawner : MonoBehaviour {
 			//dogToSpawn.GetComponent<DogBehavior> ().UnleashDog ();
 
 		}
+		Debug.DrawLine (
+			Camera.main.ViewportToWorldPoint (new Vector2 (0.5f, 0.0f)), 
+			pos, 
+			Color.red,
+			1.0f
+		);
 
 	}
 
