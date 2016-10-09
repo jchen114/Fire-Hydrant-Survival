@@ -10,7 +10,7 @@ public class DogBehavior : MonoBehaviour {
 	private static string STATE_VARIABLE = "State";
 
 	private Animator anim;
-	public DogState myState;
+	public DogState myState = DogState.INACTIVE;
 	DogAction currentAction;
 
 	public DogType myType;
@@ -43,8 +43,8 @@ public class DogBehavior : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		
 		anim = GetComponent<Animator> ();
-		myState = DogState.MOVING;
 
 		fireHydrant = GameObject.Find (Constants.OBJ_FIRE_HYDRANT);
 		fireHydrantCollider = fireHydrant.GetComponent<BoxCollider2D> ();
@@ -66,6 +66,7 @@ public class DogBehavior : MonoBehaviour {
 
 	public void UnleashDog() {
 		myState = DogState.MOVING;
+		timeLeftForAction = 0.0f;
 	}
 
 	void FixedUpdate() {
@@ -94,35 +95,33 @@ public class DogBehavior : MonoBehaviour {
 			break;
 		case DogState.MOVING:
 			{
-				if (true) {
-					//Debug.Log ("Moving");
-					if (timeLeftForAction > 0) {
-						//Debug.Log ("Performing action");
-						timeLeftForAction -= Time.deltaTime;
+				//Debug.Log ("Moving");
+				if (timeLeftForAction > 0) {
+					//Debug.Log ("Performing action");
+					timeLeftForAction -= Time.deltaTime;
 
-						switch (currentAction) {
+					switch (currentAction) {
 
-						case DogAction.LEFT:
-							MoveLeft ();
-							break;
-						case DogAction.UP:
-							MoveUp ();
-							break;
-						case DogAction.RIGHT:
-							MoveRight ();
-							break;
-						case DogAction.DOWN:
-							MoveDown ();
-							break;
-						case DogAction.IDLE:
-							MoveIdle ();
-							break;
-						}
-
-					} else {
-						//Debug.Log ("New Action");
-						HandleActionChoice ();
+					case DogAction.LEFT:
+						MoveLeft ();
+						break;
+					case DogAction.UP:
+						MoveUp ();
+						break;
+					case DogAction.RIGHT:
+						MoveRight ();
+						break;
+					case DogAction.DOWN:
+						MoveDown ();
+						break;
+					case DogAction.IDLE:
+						MoveIdle ();
+						break;
 					}
+
+				} else {
+					//Debug.Log ("New Action");
+					HandleActionChoice ();
 				}
 
 			}

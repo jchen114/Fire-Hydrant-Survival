@@ -10,9 +10,9 @@ public class DogSpawner : MonoBehaviour {
 
 	List<GameObject> smallDogs = new List <GameObject> ();
 	List<GameObject> mediumDogs = new List <GameObject> ();
-	List<GameObject> bigDogs = = new List <GameObject> ();;
+	List<GameObject> bigDogs = new List <GameObject> ();
 
-	float spawnTime = 1.0f;
+	float spawnTime = 5.0f;
 	float remainingTime = 0.0f;
 
 	float timeOfPlay = 0.0f;
@@ -77,22 +77,21 @@ public class DogSpawner : MonoBehaviour {
 
 			float val = Random.Range(0.0f, 1.0f);
 
-			GameObject dogToSpawn;
+			GameObject dogToSpawn = null;
 
 			if (val <= probabilities [0]) {
 				// Spawn small dog
-				bool availableDog = false;
 
 				foreach (GameObject dog in smallDogs) {
 					DogBehavior script = dog.GetComponent<DogBehavior>() as DogBehavior;
 					if (script.myState == DogState.INACTIVE) {
-						availableDog = true;
 						dogToSpawn = dog;
 					}
 				}
-				if (!availableDog) {
+				if (!dogToSpawn) {
 					// Create a Small Dog
 					dogToSpawn = Instantiate(Resources.Load(Constants.OBJ_SMALL_DOG)) as GameObject;
+					//Debug.Log("Make a new dog");
 				}
 			} else if (val > probabilities [0] && val <= probabilities [0] + probabilities [1]) {
 				// Spawn middle dog
@@ -105,20 +104,20 @@ public class DogSpawner : MonoBehaviour {
 
 			//Debug.Log ("Spawn Location x = " + spawnLocation.x + " Spawn location y = " + spawnLocation.y);
 
-			//dogToSpawn.transform.position = spawnLocation;
+			dogToSpawn.transform.position = pos;
 
 			// Reset the timer
 			remainingTime = spawnTime;
 
-			//dogToSpawn.GetComponent<DogBehavior> ().UnleashDog ();
+			dogToSpawn.GetComponent<DogBehavior> ().UnleashDog ();
 
 		}
-		Debug.DrawLine (
-			Camera.main.ViewportToWorldPoint (new Vector2 (0.5f, 0.0f)), 
-			pos, 
-			Color.red,
-			1.0f
-		);
+//		Debug.DrawLine (
+//			Camera.main.ViewportToWorldPoint (new Vector2 (0.5f, 0.0f)), 
+//			pos, 
+//			Color.red,
+//			1.0f
+//		);
 
 	}
 
