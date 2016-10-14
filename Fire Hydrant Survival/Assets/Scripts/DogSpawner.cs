@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
+public enum GameState {INACTIVE, ACTIVE};
+
 public class DogSpawner : MonoBehaviour {
 
 	private enum SpawnType {SMALL_DOG, MEDIUM_DOG, BIG_DOG};
@@ -27,14 +29,52 @@ public class DogSpawner : MonoBehaviour {
 
 	Vector2 pos;
 
+	GameState myState;
+
 	// Use this for initialization
 	void Start () {
+
+		myState = GameState.INACTIVE;
+
 		remainingTime = spawnTime;
 
 	}
 
 	void FixedUpdate() {
 
+		switch (myState) {
+		case GameState.ACTIVE:
+			{
+				Spawner ();
+			}
+			break;
+		case GameState.INACTIVE:
+			{
+				
+			}
+			break;
+		}
+
+	}
+
+	// Update is called once per frame
+	void Update () {
+	
+	}
+
+	public void Activate() {
+
+		myState = GameState.ACTIVE;
+
+	}
+
+	public void Deactivate() {
+
+		myState = GameState.INACTIVE;
+
+	}
+
+	void Spawner() {
 		timeOfPlay += Time.deltaTime;
 
 		remainingTime -= Time.deltaTime;
@@ -45,7 +85,7 @@ public class DogSpawner : MonoBehaviour {
 		}
 
 		if (remainingTime <= 0) {
-			
+
 			// Sample probability
 
 			Vector2 spawnLocation = new Vector2(0,0);
@@ -95,7 +135,7 @@ public class DogSpawner : MonoBehaviour {
 				}
 			} else if (val > probabilities [0] && val <= probabilities [0] + probabilities [1]) {
 				// Spawn middle dog
-				
+
 			} else if (val > probabilities [0] + probabilities [1]) {
 				// Spawn big dog
 			}
@@ -112,17 +152,12 @@ public class DogSpawner : MonoBehaviour {
 			dogToSpawn.GetComponent<DogBehavior> ().UnleashDog ();
 
 		}
-//		Debug.DrawLine (
-//			Camera.main.ViewportToWorldPoint (new Vector2 (0.5f, 0.0f)), 
-//			pos, 
-//			Color.red,
-//			1.0f
-//		);
-
+		//		Debug.DrawLine (
+		//			Camera.main.ViewportToWorldPoint (new Vector2 (0.5f, 0.0f)), 
+		//			pos, 
+		//			Color.red,
+		//			1.0f
+		//		);
 	}
 
-	// Update is called once per frame
-	void Update () {
-	
-	}
 }
