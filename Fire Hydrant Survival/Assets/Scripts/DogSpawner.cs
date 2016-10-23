@@ -24,7 +24,7 @@ public class DogSpawner : MonoBehaviour {
 
 	float sampleInterval = 2.0f;
 
-	float intervalTime = 30.0f;
+	float intervalTime = 10.0f;
 	int intervalCount;
 
 	Vector2 pos;

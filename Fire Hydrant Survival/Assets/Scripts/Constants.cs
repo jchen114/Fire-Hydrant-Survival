@@ -26,7 +26,10 @@ public class Constants : MonoBehaviour
 	public static string UI_MORALE_BAR = "Morale Bar";
 	public static string UI_MORALE_CANVAS = "Morale Canvas";
 
-	public static string UI_GAME_TITLE = "Fire Hydrant Survival Title";
+	public static string TEXT_GAME_TITLE = "Fire Hydrant Survival Title";
+	public static string UI_GUI_CANVAS = "GUI canvas";
+	public static string TEXT_PLAY_TITLE = "Play";
 
+	public static string GOBJ_GAME_MANAGER = "Game Manager";
 }
 

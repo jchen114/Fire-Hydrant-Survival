@@ -19,10 +19,20 @@ public class WaterBar : MonoBehaviour {
 	private Image content;
 
 	void Start () {
+
+		Image tankImg = GetComponent<Image> ();
+		Color temp = tankImg.color;
+		temp.a = 0.5f;
+		tankImg.color = temp;
+
 	}
 
 	void Update()
 	{		
+		
+	}
+
+	void FixedUpdate() {
 		HandleBar ();
 	}
 

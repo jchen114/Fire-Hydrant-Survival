@@ -3,6 +3,8 @@ using System.Collections;
 
 public class WaterPumper : MonoBehaviour {
 
+	private const float timeBetweenSquirts = 0.16f;
+
 	private bool isAppEditing;
 	private bool touchStartedOnHydrant;
 	private Vector2 centerOfHydrant;
@@ -31,6 +33,8 @@ public class WaterPumper : MonoBehaviour {
 
 	[SerializeField]
 	private float lerpSpeed;
+
+	private float timeSpent = timeBetweenSquirts;
 
 	void Awake() {
 		// Setup Water level
@@ -61,6 +65,12 @@ public class WaterPumper : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+	}
+
+	void FixedUpdate() {
+
+
+
 		shouldRecharge = true;
 
 		if (incurredPenalty) {
@@ -73,7 +83,7 @@ public class WaterPumper : MonoBehaviour {
 		}
 
 		if (!incurredPenalty) {
-			
+
 			if (isAppEditing) {
 				EditorTouchHandler ();
 			} else {
@@ -83,6 +93,8 @@ public class WaterPumper : MonoBehaviour {
 		}
 
 		water.SetLevel ();
+			
+
 	}
 
 	void MobileTouchHandler() {
@@ -144,10 +156,14 @@ public class WaterPumper : MonoBehaviour {
 			//Debug.Log ("On hydrant");
 			shouldRecharge = true;
 		} else {
-			//Debug.Log ("Off Hydrant");
-			Squirt (centerOfHydrant, Camera.main.ScreenToWorldPoint(pos));
-			water.CurrentValue = Mathf.Lerp(water.CurrentValue, water.CurrentValue - decreaseAmount, Time.deltaTime * lerpSpeed);
-			shouldRecharge = false;
+			Debug.Log ("Off Hydrant");
+			timeSpent -= Time.deltaTime;
+			if (timeSpent <= 0.0f) {
+				Squirt (centerOfHydrant, Camera.main.ScreenToWorldPoint (pos));
+				water.CurrentValue = Mathf.Lerp (water.CurrentValue, water.CurrentValue - decreaseAmount, Time.deltaTime * lerpSpeed);
+				shouldRecharge = false;
+				timeSpent = timeBetweenSquirts;
+			}
 		}
 
 	}
