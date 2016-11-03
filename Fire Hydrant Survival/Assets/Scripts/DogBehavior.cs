@@ -420,6 +420,10 @@ public class DogBehavior : MonoBehaviour {
 			peeAnimationTime = lengthOfAnimation;
 
 			myState = DogState.PEEING;
+
+			FireHydrant fH = other.gameObject.GetComponent<FireHydrant> ();
+			fH.GotPeedOn ();
+
 		} 
 
 	}

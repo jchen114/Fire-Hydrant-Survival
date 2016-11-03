@@ -2,7 +2,7 @@
 using System.Collections;
 
 
-enum GAME_STATE {START_MENU, START_PLAYING, PLAYING, PAUSE, END};
+enum GAME_STATE {START_MENU, START_PLAYING, PLAYING, PAUSE, GAME_OVER};
 
 public class GameManager : MonoBehaviour {
 
@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour {
 	GAME_STATE myState;
 
 	GameObject StartMenu;
+
 
 	// Use this for initialization
 	void Start () {
@@ -21,7 +22,7 @@ public class GameManager : MonoBehaviour {
 		myState = GAME_STATE.START_MENU;
 
 		// Instantiate Start menu
-		StartMenu = Instantiate(Resources.Load(Constants.UI_GUI_CANVAS)) as GameObject;
+		StartMenu = Instantiate(Resources.Load(Constants.UI_START_MENU)) as GameObject;
 		StartMenu.SetActive (true);
 
 	}
@@ -51,7 +52,7 @@ public class GameManager : MonoBehaviour {
 			break;
 		case GAME_STATE.PAUSE:
 			break;
-		case GAME_STATE.END:
+		case GAME_STATE.GAME_OVER:
 			break;
 
 		}
@@ -65,6 +66,11 @@ public class GameManager : MonoBehaviour {
 	public void ResetGame() {
 		StartMenu.SetActive (true);
 		myState = GAME_STATE.START_MENU;
+	}
+
+	public void GameOver() {
+		myState = GAME_STATE.GAME_OVER;
+		// Display the Game over menu
 	}
 
 }
