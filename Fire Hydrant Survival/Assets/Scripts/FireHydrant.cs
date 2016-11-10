@@ -7,20 +7,16 @@ using UnityEngine.UI;
 public class FireHydrant : MonoBehaviour {
 
 	const int lives = 3;
-	int currentLife = 0;
+	int currentLife = 1;
 	SpriteRenderer spriteRenderer;
-
-	List<string> spritePaths = new List<string> {
-		"Sprites/Fire Hydrant_0",
-		"Sprites/Fire Hydrant_1",
-		"Sprites/Fire Hydrant_2",
-		"Sprites/Fire Hydrant_3"
-	};
+	Sprite[] sprites;
 
 	// Use this for initialization
 	void Start () {
 		spriteRenderer = GetComponent<SpriteRenderer> ();
-
+		currentLife = 1;
+		sprites = Resources.LoadAll<Sprite>("Sprites/Fire Hydrant");
+		SetSprite ();
 	}
 	
 	// Update is called once per frame
@@ -29,7 +25,7 @@ public class FireHydrant : MonoBehaviour {
 	}
 
 	void SetSprite() {
-		spriteRenderer.sprite = Resources.Load (spritePaths [currentLife]) as Sprite;
+		spriteRenderer.sprite = sprites[currentLife];
 	}
 
 	public void GotPeedOn() {
@@ -48,4 +44,9 @@ public class FireHydrant : MonoBehaviour {
 		currentLife--;
 		SetSprite ();
 	}
+
+	public void Reset () {
+		currentLife = 1;
+	}
+
 }

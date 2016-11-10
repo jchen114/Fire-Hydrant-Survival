@@ -12,4 +12,11 @@ public class PauseButton : MonoBehaviour {
 	void Update () {
 	
 	}
+
+	public void OnClickPause() {
+		Debug.Log ("Pause Button Clicked");
+		GameManager gm = GameObject.Find (Constants.GOBJ_GAME_MANAGER).GetComponent<GameManager> ();
+		gm.PauseGame ();
+	}
+
 }

@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour {
 	GAME_STATE myState;
 
 	GameObject StartMenu;
+	GameObject PauseMenu;
+	GameObject EndMenu;
 
 
 	// Use this for initialization
@@ -25,6 +27,11 @@ public class GameManager : MonoBehaviour {
 		StartMenu = Instantiate(Resources.Load(Constants.UI_START_MENU)) as GameObject;
 		StartMenu.SetActive (true);
 
+		PauseMenu = Instantiate (Resources.Load (Constants.UI_GAME_MENU)) as GameObject;
+		PauseMenu.SetActive (false);
+
+		EndMenu = Instantiate (Resources.Load (Constants.UI_GAME_OVER_MENU)) as GameObject;
+		EndMenu.SetActive (false);
 	}
 	
 	// Update is called once per frame
@@ -51,6 +58,7 @@ public class GameManager : MonoBehaviour {
 			}
 			break;
 		case GAME_STATE.PAUSE:
+			
 			break;
 		case GAME_STATE.GAME_OVER:
 			break;
@@ -69,8 +77,21 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void GameOver() {
+		Debug.Log ("Game Over!");
 		myState = GAME_STATE.GAME_OVER;
 		// Display the Game over menu
+	}
+
+	public void PauseGame() {
+		Debug.Log ("Pause Game!");
+		myState = GAME_STATE.PAUSE;
+		PauseMenu.SetActive (true);
+	}
+
+	public void UnPauseGame() {
+		Debug.Log ("Unpause Game");
+		PauseMenu.SetActive (false);
+		myState = GAME_STATE.PLAYING;
 	}
 
 }
