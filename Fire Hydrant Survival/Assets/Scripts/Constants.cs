@@ -9,6 +9,7 @@ public class Constants : MonoBehaviour
 	public static string OBJ_WATER_SEGMENT = "Water Segment";
 	public static string OBJ_SMALL_DOG = "Small Dog";
 	public static string OBJ_DOG_SPAWNER = "Dog Spawner";
+	public static string OBJ_WATER_PUMPER = "Water Pumper";
 	public static string DOG_TAG = "Dog";
 
 	public static string OBJ_WATER_SPLASH = "Water Animation";
@@ -26,12 +27,15 @@ public class Constants : MonoBehaviour
 	public static string UI_MORALE_BAR = "Morale Bar";
 	public static string UI_MORALE_CANVAS = "Morale Canvas";
 
-	public static string TEXT_GAME_TITLE = "Fire Hydrant Survival Title";
+	public static string TEXT_GAME_TITLE = "Title";
 	public static string UI_START_MENU = "Start Menu";
 	public static string UI_GAME_MENU = "Game Menu";
 	public static string UI_GAME_OVER_MENU = "Game Over Menu";
 	public static string TEXT_PLAY_TITLE = "Play";
+	public static string TEXT_RESUME = "Resume";
+	public static string TEXT_RESTART = "Restart";
 
 	public static string GOBJ_GAME_MANAGER = "Game Manager";
+	public static string TAG_HYDRANTS = "Hydrants";
 }
 

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class FireHydrant : MonoBehaviour {
 
-	const int lives = 3;
+	const int lives = 4;
 	int currentLife = 1;
 	SpriteRenderer spriteRenderer;
 	Sprite[] sprites;

@@ -16,6 +16,9 @@ public class Menu : MonoBehaviour {
 
 	Text titleText;
 	Text playText;
+	Text resumeText;
+	Text restartText;
+
 	bool flipColor = false;
 
 	// Use this for initialization
@@ -42,6 +45,31 @@ public class Menu : MonoBehaviour {
 				});
 				trigger.triggers.Add (entry);
 			}
+			if (child.name == Constants.TEXT_RESUME) {
+				Debug.Log ("Found Resume");
+				resumeText = child.gameObject.GetComponent<Text> ();
+				EventTrigger trigger = resumeText.GetComponent<EventTrigger> ();
+				EventTrigger.Entry entry = new EventTrigger.Entry ();
+				entry.eventID = EventTriggerType.PointerClick;
+				entry.callback.AddListener((data)=> {	
+					ResumePointerClickDelegate((PointerEventData) data);
+				});
+				trigger.triggers.Add (entry);
+			}
+			if (child.name == Constants.TEXT_RESTART) {
+
+				Debug.Log ("Found Restart");
+				restartText = child.gameObject.GetComponent<Text> ();
+				restartText.text = "Restart";
+				EventTrigger trigger = restartText.GetComponent<EventTrigger> ();
+				EventTrigger.Entry entry = new EventTrigger.Entry ();
+				entry.eventID = EventTriggerType.PointerClick;
+				entry.callback.AddListener((data)=> {	
+					RestartPointerClickDelegate((PointerEventData) data);
+				});
+				trigger.triggers.Add (entry);
+
+			}
 		}
 	}
 	
@@ -67,6 +95,18 @@ public class Menu : MonoBehaviour {
 		Debug.Log ("Play text called");
 		GameObject gameManager = GameObject.Find (Constants.GOBJ_GAME_MANAGER);
 		gameManager.GetComponent<GameManager> ().PlayGame ();
+	}
+
+	public void RestartPointerClickDelegate(PointerEventData data) {
+		Debug.Log ("Restart text pressed");
+		GameObject gameManager = GameObject.Find (Constants.GOBJ_GAME_MANAGER);
+		gameManager.GetComponent<GameManager> ().ResetGame ();
+	}
+
+	public void ResumePointerClickDelegate(PointerEventData data) {
+		Debug.Log ("Resume text called");
+		GameObject gameManager = GameObject.Find (Constants.GOBJ_GAME_MANAGER);
+		gameManager.GetComponent<GameManager> ().UnPauseGame();
 	}
 
 }

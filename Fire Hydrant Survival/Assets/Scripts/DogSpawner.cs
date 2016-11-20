@@ -36,7 +36,7 @@ public class DogSpawner : MonoBehaviour {
 
 		myState = GameState.INACTIVE;
 
-		remainingTime = spawnTime;
+		remainingTime = 0.0f;
 
 	}
 
@@ -65,13 +65,47 @@ public class DogSpawner : MonoBehaviour {
 	public void Activate() {
 
 		myState = GameState.ACTIVE;
+		// We gotta activate all the dogs again!
+		foreach (GameObject dog in smallDogs) {
+			dog.GetComponent<DogBehavior> ().UnPauseDog ();
+		}
+		foreach (GameObject dog in mediumDogs) {
+			dog.GetComponent<DogBehavior> ().UnPauseDog ();
+		}
+		foreach (GameObject dog in bigDogs) {
+			dog.GetComponent<DogBehavior> ().UnPauseDog ();
+		}
 
 	}
 
 	public void Deactivate() {
 
 		myState = GameState.INACTIVE;
+		foreach (GameObject dog in smallDogs) {
+			dog.GetComponent<DogBehavior> ().PauseDog ();
+		}
+		foreach (GameObject dog in mediumDogs) {
+			dog.GetComponent<DogBehavior> ().PauseDog ();
+		}
+		foreach (GameObject dog in bigDogs) {
+			dog.GetComponent<DogBehavior> ().PauseDog ();
+		}
+	}
 
+	public void Reset() {
+		// Clear all dogs!
+		foreach (GameObject dog in smallDogs) {
+			Destroy (dog);
+		}
+		foreach (GameObject dog in mediumDogs) {
+			Destroy (dog);
+		}
+		foreach (GameObject dog in bigDogs) {
+			Destroy (dog);
+		}
+		smallDogs.Clear();
+		mediumDogs.Clear ();
+		bigDogs.Clear ();
 	}
 
 	void Spawner() {
@@ -121,7 +155,6 @@ public class DogSpawner : MonoBehaviour {
 
 			if (val <= probabilities [0]) {
 				// Spawn small dog
-
 				foreach (GameObject dog in smallDogs) {
 					DogBehavior script = dog.GetComponent<DogBehavior>() as DogBehavior;
 					if (script.myState == DogState.INACTIVE) {
@@ -131,6 +164,7 @@ public class DogSpawner : MonoBehaviour {
 				if (!dogToSpawn) {
 					// Create a Small Dog
 					dogToSpawn = Instantiate(Resources.Load(Constants.OBJ_SMALL_DOG)) as GameObject;
+					smallDogs.Add (dogToSpawn);
 					//Debug.Log("Make a new dog");
 				}
 			} else if (val > probabilities [0] && val <= probabilities [0] + probabilities [1]) {

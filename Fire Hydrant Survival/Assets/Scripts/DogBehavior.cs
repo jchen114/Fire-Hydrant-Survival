@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public enum DogState {INACTIVE, MOVING, PEEING, DEFEATED, ESCAPE, HIT};
+public enum DogState {INACTIVE, MOVING, PEEING, PAUSED, DEFEATED, ESCAPE, HIT};
 enum DogAction {LEFT, RIGHT, UP, DOWN, IDLE};
 
 public class DogBehavior : MonoBehaviour {
@@ -11,6 +11,7 @@ public class DogBehavior : MonoBehaviour {
 
 	private Animator anim;
 	public DogState myState = DogState.INACTIVE;
+	public DogState pauseState = DogState.INACTIVE;
 	DogAction currentAction;
 
 	public DogType myType;
@@ -136,6 +137,11 @@ public class DogBehavior : MonoBehaviour {
 
 				invincible = true;
 
+			}
+			break;
+		case DogState.PAUSED:
+			{
+				
 			}
 			break;
 		case DogState.ESCAPE:
@@ -399,6 +405,15 @@ public class DogBehavior : MonoBehaviour {
 			myState = DogState.HIT;
 			hitDuration = hitTime;
 		}
+	}
+
+	public void PauseDog() {
+		pauseState = myState;
+		myState = DogState.PAUSED;
+	}
+
+	public void UnPauseDog() {
+		myState = pauseState;
 	}
 
 	void OnTriggerEnter2D(Collider2D other) {

@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum PumpState {INACTIVE, ACTIVE};
+
 public class WaterPumper : MonoBehaviour {
 
 	private const float timeBetweenSquirts = 0.16f;
@@ -36,6 +38,8 @@ public class WaterPumper : MonoBehaviour {
 
 	private float timeSpent = timeBetweenSquirts;
 
+	PumpState myState = PumpState.INACTIVE;
+
 	void Awake() {
 		// Setup Water level
 		water.waterBar = GameObject.Find(Constants.OBJ_WATER_TANK).GetComponent<WaterBar>();
@@ -60,6 +64,8 @@ public class WaterPumper : MonoBehaviour {
 		centerOfHydrant = hydrant.GetComponent<BoxCollider2D> ().transform.TransformPoint (centerOfHydrant);
 		Debug.Log ("Center of hydrant x = " + centerOfHydrant.x + ". y = " + centerOfHydrant.y);
 
+		myState = PumpState.INACTIVE;
+
 	}
 
 	// Update is called once per frame
@@ -70,29 +76,42 @@ public class WaterPumper : MonoBehaviour {
 	void FixedUpdate() {
 
 
+		switch (myState) {
+		case PumpState.ACTIVE:
+			{
+				shouldRecharge = true;
 
-		shouldRecharge = true;
+				if (incurredPenalty) {
+					penaltyTimeLeft -= Time.deltaTime;
+					//Debug.Log ("Penalty time left = " + penaltyTimeLeft);
+					incurredPenalty = (penaltyTimeLeft <= 0) ? false: true;
+					if (!incurredPenalty) {
+						water.CurrentValue = Mathf.Lerp(water.CurrentValue, water.CurrentValue + increaseAmount, Time.deltaTime * lerpSpeed);
+					}
+				}
 
-		if (incurredPenalty) {
-			penaltyTimeLeft -= Time.deltaTime;
-			//Debug.Log ("Penalty time left = " + penaltyTimeLeft);
-			incurredPenalty = (penaltyTimeLeft <= 0) ? false: true;
-			if (!incurredPenalty) {
-				water.CurrentValue = Mathf.Lerp(water.CurrentValue, water.CurrentValue + increaseAmount, Time.deltaTime * lerpSpeed);
+				if (!incurredPenalty) {
+
+					if (isAppEditing) {
+						EditorTouchHandler ();
+					} else {
+						MobileTouchHandler ();
+					}
+					UpdateWater ();
+				}
+
+				water.SetLevel ();
 			}
+			break;
+		case PumpState.INACTIVE:
+			{
+				// Don't do anything
+			}
+			break;
 		}
 
-		if (!incurredPenalty) {
 
-			if (isAppEditing) {
-				EditorTouchHandler ();
-			} else {
-				MobileTouchHandler ();
-			}
-			UpdateWater ();
-		}
 
-		water.SetLevel ();
 			
 
 	}
@@ -202,6 +221,19 @@ public class WaterPumper : MonoBehaviour {
 		if (shouldRecharge && !incurredPenalty) {
 			water.CurrentValue = Mathf.Lerp(water.CurrentValue, water.CurrentValue + increaseAmount, Time.deltaTime * lerpSpeed);
 		}
+	}
+
+	public void Reset() {
+		water.MaxValue = 100;
+		water.CurrentValue = 100;
+	}
+
+	public void Activate() {
+		myState = PumpState.ACTIVE;
+	}
+
+	public void Deactivate() {
+		myState = PumpState.INACTIVE;
 	}
 
 }
