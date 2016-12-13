@@ -34,6 +34,7 @@ public class Constants : MonoBehaviour
 	public static string TEXT_PLAY_TITLE = "Play";
 	public static string TEXT_RESUME = "Resume";
 	public static string TEXT_RESTART = "Restart";
+	public static string TEXT_SCORE = "Count";
 
 	public static string GOBJ_GAME_MANAGER = "Game Manager";
 	public static string TAG_HYDRANTS = "Hydrants";

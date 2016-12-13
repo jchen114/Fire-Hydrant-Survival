@@ -42,6 +42,8 @@ public class DogBehavior : MonoBehaviour {
 
 	bool invincible = false;
 
+	Avoided ScoreText;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -63,6 +65,8 @@ public class DogBehavior : MonoBehaviour {
 
 		me = this.gameObject;
 
+		ScoreText = GameObject.Find (Constants.TEXT_SCORE).GetComponent<Avoided>();
+
 	}
 
 	public void UnleashDog() {
@@ -76,8 +80,12 @@ public class DogBehavior : MonoBehaviour {
 
 		if (moraleManager.defeated) {
 			//Debug.Log ("Dog was defeated");
+			if (!invincible) {
+				ScoreText.Increment ();
+			}
 			invincible = true;
 			myState = DogState.DEFEATED;
+
 		}
 
 		switch (myState) {
