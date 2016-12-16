@@ -5,12 +5,15 @@ public enum PumpState {INACTIVE, ACTIVE};
 
 public class WaterPumper : MonoBehaviour {
 
-	private const float timeBetweenSquirts = 0.16f;
+	private const float timeBetweenSquirts = 0.08f;
 
 	private bool isAppEditing;
 	private bool touchStartedOnHydrant;
 	private Vector2 centerOfHydrant;
 	public float thrust;
+
+	private float max_thrust = 1500;
+	private float speedup = 100;
 
 	private GameObject hydrant;
 	public GameObject waterSegment; // Prefab connected through inspector
@@ -37,6 +40,9 @@ public class WaterPumper : MonoBehaviour {
 	private float lerpSpeed;
 
 	private float timeSpent = timeBetweenSquirts;
+
+	private float min_time = 0.08f;
+	private float dec_amount = 0.02f;
 
 	PumpState myState = PumpState.INACTIVE;
 
@@ -109,10 +115,6 @@ public class WaterPumper : MonoBehaviour {
 			}
 			break;
 		}
-
-
-
-			
 
 	}
 

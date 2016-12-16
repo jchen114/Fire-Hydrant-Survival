@@ -47,6 +47,7 @@ public class FireHydrant : MonoBehaviour {
 
 	public void Reset () {
 		currentLife = 1;
+		SetSprite ();
 	}
 
 }

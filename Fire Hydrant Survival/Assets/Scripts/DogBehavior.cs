@@ -33,7 +33,7 @@ public class DogBehavior : MonoBehaviour {
 	Vector2 hitDirection;
 	float hitMagnitude = 3.0f;
 
-	float hitTime = 0.2f;
+	float hitTime = 0.3f;
 	float hitDuration = 0.0f;
 
 	float peeAnimationTime;
