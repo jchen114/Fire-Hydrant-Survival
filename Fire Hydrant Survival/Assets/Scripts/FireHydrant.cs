@@ -42,6 +42,9 @@ public class FireHydrant : MonoBehaviour {
 
 	public void GotRestored() {
 		currentLife--;
+		if (currentLife <= 1) {
+			currentLife = 1;
+		}
 		SetSprite ();
 	}
 
