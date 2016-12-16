@@ -7,6 +7,8 @@ enum DogAction {LEFT, RIGHT, UP, DOWN, IDLE};
 
 public class DogBehavior : MonoBehaviour {
 
+	#region VARIABLES
+
 	private static string STATE_VARIABLE = "State";
 
 	private Animator anim;
@@ -32,6 +34,8 @@ public class DogBehavior : MonoBehaviour {
 
 	Vector2 hitDirection;
 	float hitMagnitude = 3.0f;
+	int numHits = 0;
+
 
 	float hitTime = 0.3f;
 	float hitDuration = 0.0f;
@@ -43,6 +47,10 @@ public class DogBehavior : MonoBehaviour {
 	bool invincible = false;
 
 	Avoided ScoreText;
+
+	#endregion
+
+	#region UNITY
 
 	// Use this for initialization
 	void Start () {
@@ -69,11 +77,6 @@ public class DogBehavior : MonoBehaviour {
 
 	}
 
-	public void UnleashDog() {
-		myState = DogState.MOVING;
-		timeLeftForAction = 0.0f;
-	}
-
 	void FixedUpdate() {
 
 		myCenter = this.gameObject.GetComponent<Transform> ().position;
@@ -95,7 +98,12 @@ public class DogBehavior : MonoBehaviour {
 				// Move in direction of hit for some duration.
 				hitDuration -= Time.deltaTime;
 				if (hitDuration <= 0) {
-					myState = DogState.MOVING;
+					numHits -= 1;
+					if (numHits == 0) {
+						myState = DogState.MOVING;
+					} else {
+						hitDuration = hitTime;
+					}
 				} else {
 					Move (hitDirection, hitMagnitude);
 				}
@@ -189,6 +197,37 @@ public class DogBehavior : MonoBehaviour {
 
 	}
 
+	void OnTriggerEnter2D(Collider2D other) {
+
+		float lengthOfAnimation = 0.0f;
+
+		if (other.gameObject.name == Constants.OBJ_FIRE_HYDRANT) {
+			Debug.Log("Hit the hydrant");
+			if (myCenter.x >= centerOfHydrant.x) {
+				// Pee right
+				anim.SetInteger(STATE_VARIABLE, 5);
+				lengthOfAnimation = GetAnimationlength (Constants.ANIM_PEE_RIGHT);
+			} else {
+				// Pee left
+				anim.SetInteger(STATE_VARIABLE, 6);
+				lengthOfAnimation = GetAnimationlength (Constants.ANIM_PEE_LEFT);
+			}
+
+			peeAnimationTime = lengthOfAnimation;
+
+			myState = DogState.PEEING;
+
+			FireHydrant fH = other.gameObject.GetComponent<FireHydrant> ();
+			fH.GotPeedOn ();
+
+		} 
+
+	}
+
+	#endregion
+
+	#region ANIMATION
+
 	float GetAnimationlength(string animName) {
 		Animator anim = GetComponent<Animator>();
 		float length = 0.0f;
@@ -203,6 +242,151 @@ public class DogBehavior : MonoBehaviour {
 			}
 		}
 		return length;
+	}
+
+	void SetAnimation() {
+		switch (currentAction) {
+		case DogAction.LEFT:
+			anim.SetInteger (STATE_VARIABLE, 1);
+			break;
+		case DogAction.UP:
+			anim.SetInteger (STATE_VARIABLE, 2);
+			break;
+		case DogAction.RIGHT:
+			anim.SetInteger (STATE_VARIABLE, 3);
+			break;
+		case DogAction.DOWN:
+			anim.SetInteger (STATE_VARIABLE, 4);
+			break;
+		case DogAction.IDLE:
+			anim.SetInteger (STATE_VARIABLE, 0);
+			break;
+		}
+	}
+
+	#endregion
+
+	#region BEHAVIOR
+
+	bool CheckPeeCondition() {
+
+		Vector2 size = fireHydrantCollider.bounds.size;
+
+		if (myCenter.x > centerOfHydrant.x - size.x / 2 - 0.0f &&
+		    myCenter.x < centerOfHydrant.x + size.x / 2 + 0.0f &&
+		    myCenter.y > centerOfHydrant.y - size.y / 2 - 0.0f &&
+		    myCenter.y < centerOfHydrant.y + size.y / 2 + 0.0f) {
+
+			//Debug.Log ("Peeing");
+			float lengthOfAnimation = 0.0f;
+			if (myCenter.x >= centerOfHydrant.x) {
+				// Pee right
+				anim.SetBool (Constants.BOOL_PEE_RIGHT, true);
+				lengthOfAnimation = GetAnimationlength (Constants.ANIM_PEE_RIGHT);
+			} else {
+				// Pee left
+				anim.SetBool (Constants.BOOL_PEE_LEFT, true);
+				lengthOfAnimation = GetAnimationlength (Constants.ANIM_PEE_LEFT);
+			}
+
+			peeAnimationTime = lengthOfAnimation;
+
+			myState = DogState.PEEING;
+			return true;
+		}
+		return false;
+	}
+
+	float ComputeProbabilityOfCorrectManeuver(float distance) {
+		//float probability = 2.0f / 5.0f * 2.0f / Mathf.PI * Mathf.Atan (1 / 2 * distance) + 0.6f;
+		float probability = 19.0f/20.0f;
+		return probability;
+	}
+
+	bool Sample(float probability) {
+		float random = Random.Range (0.0f, 1.0f);
+		if (random <= probability) {
+			return true;
+		}
+		return false;
+	}
+
+	#endregion
+
+	#region MOVEMENT
+
+	void MoveLeft() {
+		//Debug.Log ("Move left");
+		Vector2 direction = new Vector2(-1, 0);
+		Move (direction, moveMagnitude);
+	}
+
+	void MoveRight() {
+		//Debug.Log ("Move right");
+		Vector2 direction = new Vector2(1, 0);
+		Move (direction, moveMagnitude);
+	}
+
+	void MoveUp() {
+		//Debug.Log ("Move up");
+		Vector2 direction = new Vector2(0, 1);
+		Move (direction, moveMagnitude);
+	}
+
+	void MoveDown() {
+		//Debug.Log ("Move down");
+		Vector2 direction = new Vector2(0, -1);
+		Move (direction, moveMagnitude);
+	}
+
+	void MoveIdle() {
+		//Debug.Log ("Move idle");
+		Vector2 direction = new Vector2(0, 0);
+		Move (direction, moveMagnitude);
+	}
+
+	void Move (Vector2 direction, float magnitude) {
+		Transform transform = GetComponent<Transform> ();
+		Vector2 tfrm = (Vector2) transform.position + direction * magnitude * Time.deltaTime;
+		GetComponent<Transform> ().position = tfrm;
+		//Debug.Log ("transform after = (" + GetComponent<Transform> ().position.x + ", " + GetComponent<Transform> ().position.y + ")");
+	}
+
+	#endregion
+
+	#region ACTION
+
+	float SampleTimeForAction() {
+		return Random.Range (0.3f, 1.0f); // from 1 second to 2 seconds
+	}
+
+	void PrintAction() {
+		switch (currentAction) {
+
+		case DogAction.LEFT:
+			Debug.Log ("Left");
+			break;
+		case DogAction.UP:
+			Debug.Log ("Up");
+			break;
+		case DogAction.RIGHT:
+			Debug.Log ("Right");
+			break;
+		case DogAction.DOWN:
+			Debug.Log ("Down");
+			break;
+		case DogAction.IDLE:
+			Debug.Log ("Idle");
+			break;
+
+		}
+	}
+
+	DogAction ActionToChoose(List<DogAction> actions) {
+		float probabilitySegments = 1.0f / actions.Count;
+		float random = Random.Range (0.0f, 1.0f);
+		int index = Mathf.FloorToInt (random / probabilitySegments);
+		return actions[index];
 	}
 
 	void HandleActionChoice() {
@@ -272,138 +456,9 @@ public class DogBehavior : MonoBehaviour {
 		timeLeftForAction = timeForAction;
 	}
 
-	bool CheckPeeCondition() {
+	#endregion
 
-		Vector2 size = fireHydrantCollider.bounds.size;
-
-		if (myCenter.x > centerOfHydrant.x - size.x / 2 - 0.0f &&
-		    myCenter.x < centerOfHydrant.x + size.x / 2 + 0.0f &&
-		    myCenter.y > centerOfHydrant.y - size.y / 2 - 0.0f &&
-		    myCenter.y < centerOfHydrant.y + size.y / 2 + 0.0f) {
-
-			//Debug.Log ("Peeing");
-			float lengthOfAnimation = 0.0f;
-			if (myCenter.x >= centerOfHydrant.x) {
-				// Pee right
-				anim.SetBool (Constants.BOOL_PEE_RIGHT, true);
-				lengthOfAnimation = GetAnimationlength (Constants.ANIM_PEE_RIGHT);
-			} else {
-				// Pee left
-				anim.SetBool (Constants.BOOL_PEE_LEFT, true);
-				lengthOfAnimation = GetAnimationlength (Constants.ANIM_PEE_LEFT);
-			}
-
-			peeAnimationTime = lengthOfAnimation;
-
-			myState = DogState.PEEING;
-			return true;
-		}
-		return false;
-	}
-
-	float ComputeProbabilityOfCorrectManeuver(float distance) {
-		//float probability = 2.0f / 5.0f * 2.0f / Mathf.PI * Mathf.Atan (1 / 2 * distance) + 0.6f;
-		float probability = 19.0f/20.0f;
-		return probability;
-	}
-
-	bool Sample(float probability) {
-		float random = Random.Range (0.0f, 1.0f);
-		if (random <= probability) {
-			return true;
-		}
-		return false;
-	}
-
-	DogAction ActionToChoose(List<DogAction> actions) {
-		float probabilitySegments = 1.0f / actions.Count;
-		float random = Random.Range (0.0f, 1.0f);
-		int index = Mathf.FloorToInt (random / probabilitySegments);
-		return actions[index];
-	}
-
-	void SetAnimation() {
-		switch (currentAction) {
-		case DogAction.LEFT:
-			anim.SetInteger (STATE_VARIABLE, 1);
-			break;
-		case DogAction.UP:
-			anim.SetInteger (STATE_VARIABLE, 2);
-			break;
-		case DogAction.RIGHT:
-			anim.SetInteger (STATE_VARIABLE, 3);
-			break;
-		case DogAction.DOWN:
-			anim.SetInteger (STATE_VARIABLE, 4);
-			break;
-		case DogAction.IDLE:
-			anim.SetInteger (STATE_VARIABLE, 0);
-			break;
-		}
-	}
-
-	void MoveLeft() {
-		//Debug.Log ("Move left");
-		Vector2 direction = new Vector2(-1, 0);
-		Move (direction, moveMagnitude);
-	}
-
-	void MoveRight() {
-		//Debug.Log ("Move right");
-		Vector2 direction = new Vector2(1, 0);
-		Move (direction, moveMagnitude);
-	}
-
-	void MoveUp() {
-		//Debug.Log ("Move up");
-		Vector2 direction = new Vector2(0, 1);
-		Move (direction, moveMagnitude);
-	}
-
-	void MoveDown() {
-		//Debug.Log ("Move down");
-		Vector2 direction = new Vector2(0, -1);
-		Move (direction, moveMagnitude);
-	}
-
-	void MoveIdle() {
-		//Debug.Log ("Move idle");
-		Vector2 direction = new Vector2(0, 0);
-		Move (direction, moveMagnitude);
-	}
-
-	void Move (Vector2 direction, float magnitude) {
-		Transform transform = GetComponent<Transform> ();
-		Vector2 tfrm = (Vector2) transform.position + direction * magnitude * Time.deltaTime;
-		GetComponent<Transform> ().position = tfrm;
-		//Debug.Log ("transform after = (" + GetComponent<Transform> ().position.x + ", " + GetComponent<Transform> ().position.y + ")");
-	}
-
-	float SampleTimeForAction() {
-		return Random.Range (0.3f, 1.0f); // from 1 second to 2 seconds
-	}
-
-	void PrintAction() {
-		switch (currentAction) {
-
-		case DogAction.LEFT:
-			Debug.Log ("Left");
-			break;
-		case DogAction.UP:
-			Debug.Log ("Up");
-			break;
-		case DogAction.RIGHT:
-			Debug.Log ("Right");
-			break;
-		case DogAction.DOWN:
-			Debug.Log ("Down");
-			break;
-		case DogAction.IDLE:
-			Debug.Log ("Idle");
-			break;
-
-		}
-	}
+	#region INTERFACE
 
 	public void DogWasHit(Vector2 direction) {
 
@@ -412,6 +467,12 @@ public class DogBehavior : MonoBehaviour {
 			hitDirection = direction;
 			myState = DogState.HIT;
 			hitDuration = hitTime;
+			numHits = 1;
+		}
+		if (myState == DogState.HIT) {
+			//Debug.Log ("Dog Behavior: hit");
+			moraleManager.DogWasHit ();
+			numHits += 1;
 		}
 	}
 
@@ -424,31 +485,11 @@ public class DogBehavior : MonoBehaviour {
 		myState = pauseState;
 	}
 
-	void OnTriggerEnter2D(Collider2D other) {
-
-		float lengthOfAnimation = 0.0f;
-
-		if (other.gameObject.name == Constants.OBJ_FIRE_HYDRANT) {
-			Debug.Log("Hit the hydrant");
-			if (myCenter.x >= centerOfHydrant.x) {
-				// Pee right
-				anim.SetInteger(STATE_VARIABLE, 5);
-				lengthOfAnimation = GetAnimationlength (Constants.ANIM_PEE_RIGHT);
-			} else {
-				// Pee left
-				anim.SetInteger(STATE_VARIABLE, 6);
-				lengthOfAnimation = GetAnimationlength (Constants.ANIM_PEE_LEFT);
-			}
-
-			peeAnimationTime = lengthOfAnimation;
-
-			myState = DogState.PEEING;
-
-			FireHydrant fH = other.gameObject.GetComponent<FireHydrant> ();
-			fH.GotPeedOn ();
-
-		} 
-
+	public void UnleashDog() {
+		myState = DogState.MOVING;
+		timeLeftForAction = 0.0f;
 	}
+
+	#endregion
 
 }

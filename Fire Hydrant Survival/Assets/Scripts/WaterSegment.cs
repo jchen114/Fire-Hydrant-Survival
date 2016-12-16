@@ -50,7 +50,7 @@ public class WaterSegment : MonoBehaviour {
 			Vector2 velocity = GetComponent<Rigidbody2D> ().velocity;
 			velocity.Normalize ();
 			dogBehavior.DogWasHit (velocity);
-
+			hasCollided = false;
 		}
 	}
 

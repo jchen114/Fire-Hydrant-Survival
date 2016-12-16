@@ -22,6 +22,8 @@ public class MoraleManager : MonoBehaviour {
 	public bool defeated;
 	bool hit;
 
+	int numHits = 0;
+
 	// Use this for initialization
 	void Start () {
 
@@ -48,7 +50,6 @@ public class MoraleManager : MonoBehaviour {
 	void FixedUpdate() {
 
 		if (hit) {
-
 			InterpolateMorale ();
 			hit = false;
 		}
@@ -106,6 +107,7 @@ public class MoraleManager : MonoBehaviour {
 	}
 
 	public void DogWasHit() {
+		//Debug.Log ("Morale Manager: Hit");
 		hit = true;
 	}
 			
