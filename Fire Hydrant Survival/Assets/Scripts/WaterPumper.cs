@@ -183,7 +183,7 @@ public class WaterPumper : MonoBehaviour {
 			//Debug.Log ("On hydrant");
 			shouldRecharge = true;
 		} else {
-			Debug.Log ("Off Hydrant");
+			//Debug.Log ("Off Hydrant");
 			timeSpent -= Time.deltaTime;
 			if (timeSpent <= 0.0f) {
 				Squirt (centerOfHydrant, Camera.main.ScreenToWorldPoint (pos));

@@ -14,6 +14,7 @@ public class WaterSegment : MonoBehaviour {
 	bool hasCollidedWithPowerUp = false;
 
 	int spriteIdx;
+	bool beginAnimation;
 
 	DogBehavior dogBehavior;
 	WaterPumper waterPumper;
@@ -23,8 +24,7 @@ public class WaterSegment : MonoBehaviour {
 	void Start () {
 		mySpriteRenderer = GetComponent<SpriteRenderer> ();
 		waterSplashes = Resources.LoadAll <Sprite> ("Sprites/Water_Splash");
-		displayTime = timeForAnimation / waterSplashes.Length;
-
+		Reset ();
 	}
 	
 	// Update is called once per frame
@@ -34,7 +34,14 @@ public class WaterSegment : MonoBehaviour {
 
 	void FixedUpdate() {
 		if (hasCollidedWithDog) {
+			beginAnimation = true;
+			Vector2 velocity = GetComponent<Rigidbody2D> ().velocity;
+			velocity.Normalize ();
+			dogBehavior.DogWasHit (velocity);
+			hasCollidedWithDog = false;
+		}
 
+		if (beginAnimation) {
 			displayTime -= Time.deltaTime;
 
 			if (displayTime <= 0) {
@@ -49,12 +56,8 @@ public class WaterSegment : MonoBehaviour {
 					mySpriteRenderer.sprite = waterSplashes[spriteIdx ++];
 				}
 			}
-
-			Vector2 velocity = GetComponent<Rigidbody2D> ().velocity;
-			velocity.Normalize ();
-			dogBehavior.DogWasHit (velocity);
-			hasCollidedWithDog = false;
 		}
+
 	}
 
 	void OnBecameInvisible(		) {
@@ -63,8 +66,9 @@ public class WaterSegment : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D other){
-		if (other.gameObject.tag == Constants.DOG_TAG) {
-			//Debug.Log("Hit a dog");
+
+		if (other.gameObject.tag == Constants.DOG_TAG && !beginAnimation) {
+			//Debug.Log("WaterSegment: Hit a dog");
 			spriteIdx = 0;
 			mySpriteRenderer.sprite = waterSplashes[spriteIdx ++];
 			gameObject.GetComponent<Transform> ().localScale = new Vector3 (1, 1, 0);
@@ -95,6 +99,9 @@ public class WaterSegment : MonoBehaviour {
 		}
 	}
 
-
+	public void Reset() {
+		displayTime = timeForAnimation / waterSplashes.Length;
+		beginAnimation = false;
+	}
 
 }

@@ -48,6 +48,9 @@ public class DogBehavior : MonoBehaviour {
 
 	Avoided ScoreText;
 
+	Vector2 bottomLeft;
+	Vector2 topRight;
+
 	#endregion
 
 	#region UNITY
@@ -75,6 +78,9 @@ public class DogBehavior : MonoBehaviour {
 
 		ScoreText = GameObject.Find (Constants.TEXT_SCORE).GetComponent<Avoided>();
 
+		bottomLeft = Camera.main.ViewportToWorldPoint (new Vector2 (0, 0));
+		topRight = Camera.main.ViewportToWorldPoint (new Vector2 (1, 1));
+
 	}
 
 	void FixedUpdate() {
@@ -99,7 +105,7 @@ public class DogBehavior : MonoBehaviour {
 				hitDuration -= Time.deltaTime;
 				if (hitDuration <= 0) {
 					numHits -= 1;
-					if (numHits == 0) {
+					if (numHits <= 0) {
 						myState = DogState.MOVING;
 					} else {
 						hitDuration = hitTime;
@@ -112,8 +118,23 @@ public class DogBehavior : MonoBehaviour {
 			break;
 		case DogState.MOVING:
 			{
+				
 				//Debug.Log ("Moving");
 				if (timeLeftForAction > 0) {
+					// Check if dog is near the bottom
+					if (myCenter.y <= bottomLeft.y) {
+						currentAction = DogAction.UP;
+						SetAnimation ();
+					}
+					if (myCenter.x <= bottomLeft.x) {
+						currentAction = DogAction.RIGHT;
+						SetAnimation ();
+					}
+					if (myCenter.x >= topRight.x) {
+						currentAction = DogAction.LEFT;
+						SetAnimation ();
+					}
+
 					//Debug.Log ("Performing action");
 					timeLeftForAction -= Time.deltaTime;
 
@@ -470,10 +491,12 @@ public class DogBehavior : MonoBehaviour {
 			numHits = 1;
 		}
 		if (myState == DogState.HIT) {
-			//Debug.Log ("Dog Behavior: hit");
 			moraleManager.DogWasHit ();
 			numHits += 1;
 		}
+
+		Debug.Log ("Dog was hit: " + numHits);
+
 	}
 
 	public void PauseDog() {
@@ -488,6 +511,7 @@ public class DogBehavior : MonoBehaviour {
 	public void UnleashDog() {
 		myState = DogState.MOVING;
 		timeLeftForAction = 0.0f;
+		invincible = false;
 	}
 
 	#endregion

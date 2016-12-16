@@ -31,6 +31,7 @@ public class DogSpawner : MonoBehaviour {
 
 	GameState myState;
 
+	#region UNITY
 	// Use this for initialization
 	void Start () {
 
@@ -61,6 +62,10 @@ public class DogSpawner : MonoBehaviour {
 	void Update () {
 	
 	}
+
+	#endregion
+
+	#region INTERFACE
 
 	public void Activate() {
 
@@ -107,6 +112,8 @@ public class DogSpawner : MonoBehaviour {
 		mediumDogs.Clear ();
 		bigDogs.Clear ();
 	}
+
+	#endregion
 
 	void Spawner() {
 		timeOfPlay += Time.deltaTime;
@@ -168,9 +175,11 @@ public class DogSpawner : MonoBehaviour {
 					//Debug.Log("Make a new dog");
 				}
 			} else if (val > probabilities [0] && val <= probabilities [0] + probabilities [1]) {
+				// TODO
 				// Spawn middle dog
 
 			} else if (val > probabilities [0] + probabilities [1]) {
+				// TODO
 				// Spawn big dog
 			}
 
