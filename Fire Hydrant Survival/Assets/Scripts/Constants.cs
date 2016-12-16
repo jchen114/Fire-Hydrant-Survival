@@ -38,5 +38,11 @@ public class Constants : MonoBehaviour
 
 	public static string GOBJ_GAME_MANAGER = "Game Manager";
 	public static string TAG_HYDRANTS = "Hydrants";
+
+	public static string TAG_POWER_UP = "PowerUps";
+
+	public static string POWER_UP_HEALTH = "Health Power Up";
+	public static string POWER_UP_SPEED = "Speed Power Up";
+	public static string POWER_UP_FREQ = "Frequency Power Up";
 }
 

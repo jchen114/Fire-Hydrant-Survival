@@ -5,7 +5,7 @@ public enum PumpState {INACTIVE, ACTIVE};
 
 public class WaterPumper : MonoBehaviour {
 
-	private const float timeBetweenSquirts = 0.08f;
+	private const float timeBetweenSquirts = 0.16f;
 
 	private bool isAppEditing;
 	private bool touchStartedOnHydrant;
@@ -13,7 +13,7 @@ public class WaterPumper : MonoBehaviour {
 	public float thrust;
 
 	private float max_thrust = 1500;
-	private float speedup = 100;
+	private float speedup = 50;
 
 	private GameObject hydrant;
 	public GameObject waterSegment; // Prefab connected through inspector
@@ -45,6 +45,8 @@ public class WaterPumper : MonoBehaviour {
 	private float dec_amount = 0.02f;
 
 	PumpState myState = PumpState.INACTIVE;
+
+	#region UNITY
 
 	void Awake() {
 		// Setup Water level
@@ -117,6 +119,10 @@ public class WaterPumper : MonoBehaviour {
 		}
 
 	}
+
+	#endregion
+
+	#region TOUCH_HANDLERS
 
 	void MobileTouchHandler() {
 
@@ -193,6 +199,10 @@ public class WaterPumper : MonoBehaviour {
 		touchStartedOnHydrant = false; // End the touch
 	}
 
+	#endregion
+
+	#region WATER
+
 	void Squirt(Vector2 initialPos, Vector2 endPos) {
 		//Debug.Log ("Drawing water");
 		Debug.DrawLine(initialPos, endPos, Color.red);
@@ -225,6 +235,10 @@ public class WaterPumper : MonoBehaviour {
 		}
 	}
 
+	#endregion
+
+	#region INTERFACE
+
 	public void Reset() {
 		water.MaxValue = 100;
 		water.CurrentValue = 100;
@@ -237,6 +251,16 @@ public class WaterPumper : MonoBehaviour {
 	public void Deactivate() {
 		myState = PumpState.INACTIVE;
 	}
+
+	public void IncreaseFrequency() {
+		// TODO
+	}
+
+	public void SpeedUpWater() {
+		// TODO
+	}
+
+	#endregion
 
 }
 
