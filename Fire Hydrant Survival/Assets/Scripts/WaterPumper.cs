@@ -5,7 +5,10 @@ public enum PumpState {INACTIVE, ACTIVE};
 
 public class WaterPumper : MonoBehaviour {
 
-	private const float timeBetweenSquirts = 0.16f;
+	private const float MIN_THRUST = 750.0f;
+	private const float MIN_FREQ = 0.16f;
+
+	private float timeBetweenSquirts = 0.16f;
 
 	private bool isAppEditing;
 	private bool touchStartedOnHydrant;
@@ -39,7 +42,7 @@ public class WaterPumper : MonoBehaviour {
 	[SerializeField]
 	private float lerpSpeed;
 
-	private float timeSpent = timeBetweenSquirts;
+	private float timeSpent;
 
 	private float min_time = 0.08f;
 	private float dec_amount = 0.02f;
@@ -73,6 +76,8 @@ public class WaterPumper : MonoBehaviour {
 		Debug.Log ("Center of hydrant x = " + centerOfHydrant.x + ". y = " + centerOfHydrant.y);
 
 		myState = PumpState.INACTIVE;
+
+		timeSpent = timeBetweenSquirts;
 
 	}
 
@@ -242,6 +247,8 @@ public class WaterPumper : MonoBehaviour {
 	public void Reset() {
 		water.MaxValue = 100;
 		water.CurrentValue = 100;
+		timeBetweenSquirts = MIN_FREQ;
+		thrust = MIN_THRUST;
 	}
 
 	public void Activate() {
@@ -254,10 +261,20 @@ public class WaterPumper : MonoBehaviour {
 
 	public void IncreaseFrequency() {
 		// TODO
+		timeBetweenSquirts -= dec_amount;
+		Debug.Log ("Increase Frequency");
+		if (timeBetweenSquirts <= min_time) {
+			timeBetweenSquirts = min_time;
+		}
 	}
 
 	public void SpeedUpWater() {
 		// TODO
+		thrust += speedup;
+		Debug.Log ("Increase thrust");
+		if (thrust >= max_thrust) {
+			thrust = max_thrust;
+		}
 	}
 
 	#endregion

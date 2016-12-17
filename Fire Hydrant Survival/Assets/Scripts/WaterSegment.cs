@@ -41,6 +41,11 @@ public class WaterSegment : MonoBehaviour {
 			hasCollidedWithDog = false;
 		}
 
+		if (hasCollidedWithPowerUp) {
+			beginAnimation = true;
+			hasCollidedWithPowerUp = false;
+		}
+
 		if (beginAnimation) {
 			displayTime -= Time.deltaTime;
 
@@ -78,7 +83,7 @@ public class WaterSegment : MonoBehaviour {
 			dogBehavior = other.gameObject.GetComponent<DogBehavior> () as DogBehavior;
 		}
 
-		if (other.gameObject.tag == Constants.TAG_POWER_UP) {
+		if (other.gameObject.tag == Constants.TAG_POWER_UP && !beginAnimation) {
 
 			if (other.gameObject.name == Constants.POWER_UP_HEALTH) {
 				fireHydrant = GameObject.Find (Constants.OBJ_FIRE_HYDRANT).GetComponent<FireHydrant> ();
