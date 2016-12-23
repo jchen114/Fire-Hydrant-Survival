@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum GameState {INACTIVE, ACTIVE};
+
 public class Constants : MonoBehaviour
 {
 
@@ -44,5 +46,8 @@ public class Constants : MonoBehaviour
 	public static string POWER_UP_HEALTH = "Health Power Up";
 	public static string POWER_UP_SPEED = "Speed Power Up";
 	public static string POWER_UP_FREQ = "Frequency Power Up";
+
+	public static string GOBJ_POWER_UP_SPAWNER = "PowerUp Spawner";
+
 }
 

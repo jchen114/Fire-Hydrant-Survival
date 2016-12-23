@@ -7,9 +7,6 @@ public class PowerUp : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
-
-
 	}
 
 	// Update is called once per frame
@@ -27,9 +24,8 @@ public class PowerUp : MonoBehaviour {
 
 	}
 
-
 	public void Begin() {
-		spawnTime = Random.Range (3.0f, 6.0f);
+		spawnTime = RandomFromDistribution.RandomNormalDistribution (3, 1);
 	}
 
 }

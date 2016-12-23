@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour {
 	}
 
 
+	#region Objects
+
 	DogSpawner Spawner;
 
 	public GAME_STATE myState;
@@ -28,18 +30,24 @@ public class GameManager : MonoBehaviour {
 	GameObject[] FireHydrants;
 	Avoided ScoreText;
 	WaterPumper Pumper;
+	PowerUpSpawner PUpSpawner;
 	int HighScore;
+
+	#endregion
+
+	#region UNITY
 
 	// Use this for initialization
 	void Start () {
 
 		myState = GAME_STATE.START_MENU;
-
+	
 		// Set up Game objects
 		Spawner = GameObject.Find (Constants.OBJ_DOG_SPAWNER).GetComponent<DogSpawner>() as DogSpawner;
 		FireHydrants = GameObject.FindGameObjectsWithTag (Constants.TAG_HYDRANTS);
 		Pumper = GameObject.Find (Constants.OBJ_WATER_PUMPER).GetComponent<WaterPumper>();
 		ScoreText = GameObject.Find (Constants.TEXT_SCORE).GetComponent<Avoided>();
+		PUpSpawner = GameObject.Find (Constants.GOBJ_POWER_UP_SPAWNER).GetComponent<PowerUpSpawner> ();
 		DeactivateGame ();
 
 		// Instantiate Start menu
@@ -87,6 +95,10 @@ public class GameManager : MonoBehaviour {
 
 	}
 
+	#endregion
+
+	#region MANAGER
+
 	public void PlayGame() {
 		myState = GAME_STATE.START_PLAYING;
 		// Remove the menu
@@ -99,21 +111,17 @@ public class GameManager : MonoBehaviour {
 		EndMenu.SetActive (false);
 		StartMenu.SetActive (true);
 		myState = GAME_STATE.START_MENU;
-		// Reset Dog Spawner
-		Spawner.Reset ();
+
+		Reset ();
+
 		// Reset Hydrants
 		foreach (GameObject hydrant in FireHydrants) {
 			hydrant.GetComponent<FireHydrant> ().Reset ();
 		}
-		// Reset water
-		Pumper.Reset();
 
 		HighScore = 0;
 		// Load
 		Load();
-
-		// Reset Score
-		ScoreText.Reset();
 		ScoreText.SetHighScore (HighScore);
 
 	}
@@ -149,16 +157,6 @@ public class GameManager : MonoBehaviour {
 		ActivateGame ();
 	}
 
-	public void ActivateGame() {
-		Spawner.Activate ();
-		Pumper.Activate ();
-	}
-
-	public void DeactivateGame() {
-		Spawner.Deactivate ();
-		Pumper.Deactivate ();
-	}
-
 	void SetScore() {
 		int CurrentScore = ScoreText.GetScore ();
 		if (CurrentScore > HighScore) {
@@ -166,6 +164,32 @@ public class GameManager : MonoBehaviour {
 			Save ();
 		}
 	}
+
+	#endregion
+
+	#region INTERFACE
+
+	public void ActivateGame() {
+		Spawner.Activate ();
+		Pumper.Activate ();
+		PUpSpawner.Activate ();
+	}
+
+	public void DeactivateGame() {
+		Spawner.Deactivate ();
+		Pumper.Deactivate ();
+		PUpSpawner.Deactivate ();
+	}
+
+	public void Reset() {
+		Spawner.Reset ();
+		PUpSpawner.Reset ();
+		Pumper.Reset ();
+	}
+
+	#endregion
+
+	#region MEMORY
 
 	void Save() {
 		// TODO
@@ -191,5 +215,7 @@ public class GameManager : MonoBehaviour {
 		}
 
 	}
+
+	#endregion
 
 }

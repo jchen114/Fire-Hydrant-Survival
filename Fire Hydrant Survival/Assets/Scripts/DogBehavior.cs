@@ -495,7 +495,7 @@ public class DogBehavior : MonoBehaviour {
 			numHits += 1;
 		}
 
-		Debug.Log ("Dog was hit: " + numHits);
+		//Debug.Log ("Dog was hit: " + numHits);
 
 	}
 

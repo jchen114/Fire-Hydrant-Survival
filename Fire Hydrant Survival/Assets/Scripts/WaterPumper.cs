@@ -3,7 +3,7 @@ using System.Collections;
 
 public enum PumpState {INACTIVE, ACTIVE};
 
-public class WaterPumper : MonoBehaviour {
+public class WaterPumper : MonoBehaviour, IManageable {
 
 	private const float MIN_THRUST = 750.0f;
 	private const float MIN_FREQ = 0.16f;

@@ -32,7 +32,7 @@ public class MoraleManager : MonoBehaviour {
 		for (int i = 0; i < this.transform.childCount; i++) {
 
 			if (this.transform.GetChild (i).transform.name == Constants.UI_MORALE_BAR) {
-				Debug.Log ("Found the morale bar");
+				//Debug.Log ("Found the morale bar");
 				moraleBar = this.transform.GetChild (i).gameObject.GetComponent<Image> ();
 				moraleBar.color = green;
 			}
@@ -77,7 +77,6 @@ public class MoraleManager : MonoBehaviour {
 
 		float toLerp = current_morale_lvl - damage;
 
-
 		//moraleBar.fillAmount = Mathf.Lerp (current_morale_lvl / max_morale_lvl, toLerp / max_morale_lvl, Time.deltaTime);
 		moraleBar.fillAmount = toLerp/max_morale_lvl;
 
@@ -90,7 +89,7 @@ public class MoraleManager : MonoBehaviour {
 
 		float moralePercentage = current_morale_lvl / max_morale_lvl;
 
-		Debug.Log ("morale lvl = " + current_morale_lvl);
+		//Debug.Log ("morale lvl = " + current_morale_lvl);
 
 		Color interpolatedColor = new Color(
 			moralePercentage * (green.r - red.r) + red.r, 

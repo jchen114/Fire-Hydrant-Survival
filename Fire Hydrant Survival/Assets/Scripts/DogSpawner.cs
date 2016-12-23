@@ -2,9 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public enum GameState {INACTIVE, ACTIVE};
-
-public class DogSpawner : MonoBehaviour {
+public class DogSpawner : MonoBehaviour, IManageable {
 
 	private enum SpawnType {SMALL_DOG, MEDIUM_DOG, BIG_DOG};
 
@@ -115,6 +113,8 @@ public class DogSpawner : MonoBehaviour {
 
 	#endregion
 
+	#region  Responsibility 
+
 	void Spawner() {
 		timeOfPlay += Time.deltaTime;
 
@@ -137,24 +137,24 @@ public class DogSpawner : MonoBehaviour {
 			float position = Random.Range(0, sampleInterval);
 
 			if (position < 0.5f) {
-				Debug.Log ("Left side");
+				//Debug.Log ("Left side");
 				spawnLocation.x = 0.0f;
 				spawnLocation.y = position + 0.5f;
 			} else if (position > 0.5f && position < 1.5f) {
-				Debug.Log ("Top");
+				//Debug.Log ("Top");
 				spawnLocation.x = position - 0.5f;
 				spawnLocation.y = 1.0f;
 			} else {
-				Debug.Log ("Right");
+				//Debug.Log ("Right");
 				spawnLocation.x = 1.0f;
 				spawnLocation.y = position - 1.0f;
 			}
 
-			Debug.Log ("spawn x,y = " + spawnLocation.x + " " + spawnLocation.y);
+			//Debug.Log ("spawn x,y = " + spawnLocation.x + " " + spawnLocation.y);
 
 			pos = Camera.main.ViewportToWorldPoint (new Vector2 (spawnLocation.x, spawnLocation.y));
 
-			Debug.Log ("pos x " + pos.x + " pos y = " + pos.y);
+			//Debug.Log ("pos x " + pos.x + " pos y = " + pos.y);
 
 			float val = Random.Range(0.0f, 1.0f);
 
@@ -203,4 +203,5 @@ public class DogSpawner : MonoBehaviour {
 		//		);
 	}
 
+	#endregion
 }

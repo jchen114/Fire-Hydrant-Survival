@@ -65,7 +65,7 @@ public class WaterSegment : MonoBehaviour {
 
 	}
 
-	void OnBecameInvisible(		) {
+	void OnBecameInvisible() {
 		//Debug.Log ("Destroy myself");
 		DestroyObject (gameObject);
 	}
@@ -83,19 +83,28 @@ public class WaterSegment : MonoBehaviour {
 			dogBehavior = other.gameObject.GetComponent<DogBehavior> () as DogBehavior;
 		}
 
-		if (other.gameObject.tag == Constants.TAG_POWER_UP && !beginAnimation) {
+		if (other.gameObject.tag == Constants.POWER_UP_HEALTH ||
+			other.gameObject.tag == Constants.POWER_UP_FREQ ||
+			other.gameObject.tag == Constants.POWER_UP_SPEED 
+			&& !beginAnimation) {
 
-			if (other.gameObject.name == Constants.POWER_UP_HEALTH) {
+			spriteIdx = 0;
+			mySpriteRenderer.sprite = waterSplashes[spriteIdx ++];
+			gameObject.GetComponent<Transform> ().localScale = new Vector3 (1, 1, 0);
+			mySpriteRenderer.flipX = true;
+			mySpriteRenderer.flipY = true;
+
+			if (other.gameObject.tag == Constants.POWER_UP_HEALTH) {
 				fireHydrant = GameObject.Find (Constants.OBJ_FIRE_HYDRANT).GetComponent<FireHydrant> ();
 				fireHydrant.GotRestored ();
 				hasCollidedWithPowerUp = true;
 			}
-			if (other.gameObject.name == Constants.POWER_UP_FREQ) {
+			if (other.gameObject.tag == Constants.POWER_UP_FREQ) {
 				waterPumper = GameObject.Find (Constants.OBJ_WATER_PUMPER).GetComponent<WaterPumper> ();
 				waterPumper.IncreaseFrequency ();
 				hasCollidedWithPowerUp = true;
 			}
-			if (other.gameObject.name == Constants.POWER_UP_SPEED) {	
+			if (other.gameObject.tag == Constants.POWER_UP_SPEED) {	
 				waterPumper = GameObject.Find (Constants.OBJ_WATER_PUMPER).GetComponent<WaterPumper> ();
 				waterPumper.SpeedUpWater ();
 				hasCollidedWithPowerUp = true;
