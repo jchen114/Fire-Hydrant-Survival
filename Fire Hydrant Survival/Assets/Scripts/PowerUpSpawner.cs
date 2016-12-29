@@ -5,8 +5,8 @@ using System.Collections.Generic;
 
 public class PowerUpSpawner : MonoBehaviour, IManageable {
 
-	private const float spawnTimeMean = 1.0f;
-	private const float spawnTimeStdDev = 0.1f;
+	private const float spawnTimeMean = 10.0f;
+	private const float spawnTimeStdDev = 3.0f;
 	private float timeUntilSpawn;
 	List <float> powerUpPs = new List<float> {0.34f, 0.33f, 0.33f}; // Health, Speed, Frequency
 

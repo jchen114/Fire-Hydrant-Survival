@@ -44,7 +44,7 @@ public class DogSpawner : MonoBehaviour, IManageable {
 		switch (myState) {
 		case GameState.ACTIVE:
 			{
-				//Spawner ();
+				Spawner ();
 			}
 			break;
 		case GameState.INACTIVE:

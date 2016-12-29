@@ -25,7 +25,7 @@ public class PowerUp : MonoBehaviour {
 	}
 
 	public void Begin() {
-		spawnTime = RandomFromDistribution.RandomNormalDistribution (3, 1);
+		spawnTime = RandomFromDistribution.RandomNormalDistribution (8, 1);
 	}
 
 	public void End() {
