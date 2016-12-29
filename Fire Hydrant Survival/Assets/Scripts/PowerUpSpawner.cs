@@ -5,8 +5,8 @@ using System.Collections.Generic;
 
 public class PowerUpSpawner : MonoBehaviour, IManageable {
 
-	private const float spawnTimeMean = 10.0f;
-	private const float spawnTimeStdDev = 3.0f;
+	private const float spawnTimeMean = 1.0f;
+	private const float spawnTimeStdDev = 0.1f;
 	private float timeUntilSpawn;
 	List <float> powerUpPs = new List<float> {0.34f, 0.33f, 0.33f}; // Health, Speed, Frequency
 
@@ -68,8 +68,14 @@ public class PowerUpSpawner : MonoBehaviour, IManageable {
 			}
 			break;
 		}
-		// TODO
+		// TODO 
 		// Place the power up somewhere random on top half of window
+		float y = RandomFromDistribution.RandomRangeLinear(0.5f, 1.0f, 0.0f);
+		float x = RandomFromDistribution.RandomRangeLinear (0.0f, 1.0f, 0.0f);
+
+		Vector2 pos = Camera.main.ViewportToWorldPoint (new Vector2 (x, y));
+
+		pUp.transform.position = pos;
 
 		pUp.Begin ();
 	}

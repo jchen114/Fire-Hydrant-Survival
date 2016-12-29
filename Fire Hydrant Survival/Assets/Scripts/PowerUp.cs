@@ -19,13 +19,17 @@ public class PowerUp : MonoBehaviour {
 		spawnTime -= Time.deltaTime;
 
 		if (spawnTime <= 0) {
-			Destroy (this);
+			End ();
 		}
 
 	}
 
 	public void Begin() {
 		spawnTime = RandomFromDistribution.RandomNormalDistribution (3, 1);
+	}
+
+	public void End() {
+		Destroy (gameObject);
 	}
 
 }

@@ -94,21 +94,27 @@ public class WaterSegment : MonoBehaviour {
 			mySpriteRenderer.flipX = true;
 			mySpriteRenderer.flipY = true;
 
+			hasCollidedWithPowerUp = true;
+
+			GameObject powerUp = other.gameObject;
+
 			if (other.gameObject.tag == Constants.POWER_UP_HEALTH) {
 				fireHydrant = GameObject.Find (Constants.OBJ_FIRE_HYDRANT).GetComponent<FireHydrant> ();
 				fireHydrant.GotRestored ();
-				hasCollidedWithPowerUp = true;
+
 			}
 			if (other.gameObject.tag == Constants.POWER_UP_FREQ) {
 				waterPumper = GameObject.Find (Constants.OBJ_WATER_PUMPER).GetComponent<WaterPumper> ();
 				waterPumper.IncreaseFrequency ();
-				hasCollidedWithPowerUp = true;
 			}
 			if (other.gameObject.tag == Constants.POWER_UP_SPEED) {	
 				waterPumper = GameObject.Find (Constants.OBJ_WATER_PUMPER).GetComponent<WaterPumper> ();
 				waterPumper.SpeedUpWater ();
-				hasCollidedWithPowerUp = true;
 			}
+
+			PowerUp script = powerUp.GetComponent<PowerUp> () as PowerUp;
+			script.End ();
+
 
 		}
 	}
